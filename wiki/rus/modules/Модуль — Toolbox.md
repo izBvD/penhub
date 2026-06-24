@@ -1,4 +1,4 @@
-# Модуль — Toolbox ⚙
+﻿# Модуль — Toolbox ⚙
 
 Набор утилиты, которые взаимодействуют с другими модулями: ручной импорт учетных данных, watchlist доменных админов, экспорт списков для credential-спреев и конфигурация окружения оператора.
 
@@ -61,7 +61,7 @@
 
 ## Блок 3 — OPERATOR ENVIRONMENT CONFIG
 
-Все необходимое для подготовки окружения оператора к работе (см. **[Установка — Клиент оператора](Установка%20—%20Клиент%20оператора.md)**).
+Все необходимое для подготовки окружения оператора к работе (см. **[Установка — Клиент оператора](../install/%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0%20%E2%80%94%20%D0%9A%D0%BB%D0%B8%D0%B5%D0%BD%D1%82%20%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0.md)**).
 
 - **↓ DOWNLOAD SCRIPTS** — ZIP с `nxc_collector`, `nxce.py`, `nxc_updater.py`, `collector_dc.py`, `collector_hosts.py`. 
 Установка : `./nxc_collector --install`, затем перезапустите терминал. 
@@ -74,4 +74,5 @@
 - **COPY BLOODHOUND CONFIG STRING** — формирует команду `--bh-setup` для BloodHound (bh-ip обязательно; bh-login по умолч. `neo4j`, bh-pass `bloodhoundcommunityedition`, bh-port `7687`, bh-enable `true`). Настройки BloodHound сохраняются на сервере.
 
 ![](../../images/toolbox-config-string.png)
+
 
