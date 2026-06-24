@@ -22,7 +22,7 @@
 
 Кнопка **AND** комбинирует выбранные фильтры по логике И.
 
-![[nxc-vulns-matrix.png]]
+![](../../images/nxc-vulns-matrix.png)
 
 ---
 
