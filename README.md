@@ -67,8 +67,7 @@ unzip penhub-scripts.zip -d penhub && cd penhub
 chmod +x nxc_collector && ./nxc_collector --install   # installs scripts + NXC modules + cron
 
 # paste COPY CONFIG STRING from Toolbox:
-nxc_collector -ws --server http://<server-ip> --port 322 --pass "StrongPasswordHere!" \
-              --workspace projectName --operator alice
+nxc_collector -ws --server http://<server-ip> --port 322 --pass "StrongPasswordHere!" --workspace projectName --operator alice
 
 nxc_collector --connection-test   # expect 200 OK
 ```
