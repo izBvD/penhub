@@ -112,3 +112,15 @@ State:    collector.db  (projects, hosts, credentials)
 ---
 
 > ⚠️ **Authorized use only.** PenHub is a tool for legitimate, authorized pentests and red-team assessments. It aggregates data that NetExec has already obtained — it does not exploit anything itself. All data stays on your infrastructure.
+
+---
+
+## ☕ Support
+
+PenHub is free and always will be — I built it for my own team, then realized it could help others too. If it helped you and you feel like sending a few coins my way, that'd be great. And if not — a star on the repo makes me happy too. I'm slowly building a sim racing setup and saving up for a decent monitor and a wheel. Anything helps me get there a bit sooner. 🏎️
+
+**Crypto:**
+
+- **BTC:** `bc1q4sxpec5tg5kxdv57yp84qjpv56dndjd7ncgxam`
+- **ETH:** `0x7c6f323bF0a550b60071d9214998366c36509500`
+- **TON:** `UQC2aEPcAfwkotE7_yS_HL8cBKYO_HNFim6CgvvMX5KWaHOs`
