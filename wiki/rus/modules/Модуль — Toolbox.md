@@ -2,8 +2,8 @@
 
 Набор утилиты, которые взаимодействуют с другими модулями: ручной импорт учетных данных, watchlist доменных админов, экспорт списков для credential-спреев и конфигурация окружения оператора.
 
-![[toolbox-overview1.png]]
-![[toolbox-overview2.png]]
+![](../../images/toolbox-overview1.png)
+![](../../images/toolbox-overview2.png)
 
 ---
 
@@ -19,7 +19,7 @@
 Поля шаблона: Proto · IP · Port · Domain · **Login** · **Password** · Type · URL · Source · Comment.
 **Login ИЛИ Password обязательны** (как минимум, что-то одно); остальные поля опциональны.
 
-![[toolbox-custom-template.png]]
+![](../../images/toolbox-custom-template.png)
 
 
 > Используйте это для добавления учетных данных, добытых вне nxc (веб, брут и пррочее). Для nt хешей применяется логика Hashkiller (нужно вписать hash в поле type импортируемого шаблона).
@@ -36,7 +36,7 @@
 
 Пока для имени из watchlist не найден пароль, оно показывается серой **ghost-строкой** в представлении ADM CREDS в NXC Collector. Кнопка **👻 CLEAR ADM GHOSTS** (в Manage Mode NXC Collector) удаляет ghost записи из watchlist.
 
-![[toolbox-watchlist.png]]
+![](../../images/toolbox-watchlist.png)
 
 ---
 
@@ -73,5 +73,5 @@
   Поле **OPERATOR** обязательно; IP, порт, пароль и workspace подставляются автоматически с сервера.
 - **COPY BLOODHOUND CONFIG STRING** — формирует команду `--bh-setup` для BloodHound (bh-ip обязательно; bh-login по умолч. `neo4j`, bh-pass `bloodhoundcommunityedition`, bh-port `7687`, bh-enable `true`). Настройки BloodHound сохраняются на сервере.
 
-![[toolbox-config-string.png]]
+![](../../images/toolbox-config-string.png)
 
