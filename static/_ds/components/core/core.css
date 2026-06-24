@@ -1,0 +1,245 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PenHub core component styles. Adapted verbatim from the product's shell.css.
+   Imported by styles.css so consumers AND design-system cards share one source
+   of truth. Components emit these classes; states (hover/active/disabled) live
+   here as real CSS rules.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Button ──────────────────────────────────────────────────────────────── */
+.ph-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg-1);
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: var(--text-11);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--t-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+.ph-btn:hover { border-color: var(--fg-2); color: var(--fg-0); }
+.ph-btn:disabled { opacity: .4; cursor: default; }
+
+.ph-btn--primary { color: var(--accent-cyan); border-color: rgba(0,217,255,.5); }
+.ph-btn--primary:hover { background: var(--wash-cyan); border-color: var(--accent-cyan); box-shadow: var(--aura-cyan); }
+.ph-btn--success { color: var(--accent-green); border-color: rgba(57,211,83,.5); }
+.ph-btn--success:hover { background: rgba(57,211,83,.08); border-color: var(--accent-green); }
+.ph-btn--warning { color: var(--accent-orange); border-color: rgba(240,136,62,.5); }
+.ph-btn--warning:hover { background: rgba(240,136,62,.09); border-color: var(--accent-orange); }
+.ph-btn--info { color: var(--accent-teal); border-color: rgba(38,198,218,.5); }
+.ph-btn--info:hover { background: rgba(38,198,218,.10); border-color: var(--accent-teal); }
+.ph-btn--accent { color: var(--accent-purple); border-color: var(--accent-purple); }
+.ph-btn--accent:hover { background: rgba(187,134,252,.10); }
+.ph-btn--danger { color: var(--accent-red); border-color: rgba(255,51,85,.5); }
+.ph-btn--danger:hover { background: rgba(255,51,85,.10); border-color: var(--accent-red); box-shadow: var(--aura-red); }
+
+/* Icon-only square / round buttons */
+.ph-btn--icon { padding: 0; width: 26px; height: 26px; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.ph-btn--round { border-radius: var(--radius-round); width: 24px; height: 24px; padding: 0; justify-content: center; flex-shrink: 0; }
+
+/* "LIVE" style on/off button */
+.ph-btn--toggle { color: var(--fg-2); border-color: var(--fg-2); }
+.ph-btn--toggle[aria-pressed="true"] { color: var(--accent-green); border-color: var(--accent-green); }
+.ph-btn--toggle[aria-pressed="true"]:hover { background: rgba(57,211,83,.08); }
+
+
+/* ── Pill (filter chip) ──────────────────────────────────────────────────── */
+.ph-pill {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg-2);
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: var(--text-11);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--t-base);
+  line-height: 1.4;
+}
+.ph-pill:hover { border-color: var(--fg-2); color: var(--fg-1); }
+.ph-pill[aria-pressed="true"], .ph-pill.is-active {
+  border-color: var(--accent-cyan); color: var(--accent-cyan); background: var(--wash-cyan);
+}
+/* Protocol-tinted active states */
+.ph-pill--smb.is-active   { border-color: var(--accent-cyan);   color: var(--accent-cyan);   background: var(--wash-cyan); }
+.ph-pill--ldap.is-active  { border-color: var(--accent-purple); color: var(--accent-purple); background: var(--wash-purple); }
+.ph-pill--winrm.is-active { border-color: var(--accent-teal);   color: var(--accent-teal);   background: var(--wash-teal); }
+.ph-pill--mssql.is-active { border-color: var(--accent-orange); color: var(--accent-orange); background: var(--wash-orange); }
+.ph-pill--ssh.is-active   { border-color: var(--accent-green);  color: var(--accent-green);  background: var(--wash-green); }
+.ph-pill--rdp.is-active   { border-color: var(--accent-red);    color: var(--accent-red);    background: var(--wash-red); }
+.ph-pill--vnc.is-active   { border-color: var(--accent-pink);   color: var(--accent-pink);   background: rgba(240,98,146,.07); }
+.ph-pill--ftp.is-active, .ph-pill--nfs.is-active, .ph-pill--wmi.is-active { border-color: var(--fg-1); color: var(--fg-1); }
+/* CUSTOM — sharp corners, amber, "off the grid" */
+.ph-pill--custom { border-radius: var(--radius-sharp); color: var(--accent-gold); border-color: rgba(232,184,75,.45); font-weight: 700; letter-spacing: .5px; }
+.ph-pill--custom:hover { background: rgba(232,184,75,.09); border-color: var(--accent-gold); }
+.ph-pill--custom.is-active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(232,184,75,.1); }
+/* "on/off" toggle pills (HK / UNIQ / GUEST) */
+.ph-pill--toggle[aria-pressed="true"] { border-color: var(--accent-green); color: var(--accent-green); }
+
+
+/* ── Badge ───────────────────────────────────────────────────────────────── */
+.ph-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: var(--radius-badge);
+  font-size: var(--text-10);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.ph-badge--admin    { background: rgba(255,51,85,.18); color: var(--accent-red); }
+.ph-badge--loggedin { background: rgba(57,211,83,.15); color: var(--accent-green); }
+.ph-badge--hash     { background: rgba(240,136,62,.18); color: var(--accent-orange); }
+.ph-badge--plain    { background: rgba(97,97,97,.13); color: var(--fg-2); }
+.ph-badge--vuln     { background: rgba(255,51,85,.22); color: var(--accent-red); }
+.ph-badge--safe     { background: rgba(57,211,83,.13); color: var(--accent-green); }
+.ph-badge--dpapi    { background: var(--accent-purple); color: #fff; }
+.ph-badge--na       { color: var(--fg-2); opacity: .4; }
+
+
+/* ── Input ───────────────────────────────────────────────────────────────── */
+.ph-input {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--fg-0);
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: var(--text-11);
+  outline: none;
+  transition: border-color var(--t-base), box-shadow var(--t-base);
+}
+.ph-input:focus { border-color: var(--accent-cyan); }
+.ph-input::placeholder { color: var(--fg-2); }
+.ph-input--lg { padding: 12px 16px; font-size: var(--text-12); letter-spacing: var(--tracking-wider); }
+.ph-input--lg:focus { border-color: rgba(0,217,255,.3); box-shadow: var(--aura-focus); }
+/* Search variant — leading magnifier glyph */
+.ph-search { position: relative; display: inline-flex; align-items: center; }
+.ph-search > .ph-input { padding-left: 26px; width: 200px; }
+.ph-search::before { content: "⌕"; position: absolute; left: 7px; color: var(--fg-2); font-size: 13px; pointer-events: none; }
+
+
+/* ── Select ──────────────────────────────────────────────────────────────── */
+.ph-select {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--fg-1);
+  padding: 4px 6px;
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: var(--text-11);
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--t-base);
+}
+.ph-select:focus { border-color: var(--accent-cyan); }
+
+
+/* ── Card (module card) ──────────────────────────────────────────────────── */
+.ph-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+}
+.ph-card__title {
+  font-size: var(--text-10);
+  font-weight: 700;
+  letter-spacing: var(--tracking-mega);
+  color: var(--fg-2);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+/* Full-bleed colored block header used inside cards */
+.ph-card__header {
+  font-size: var(--text-11);
+  font-weight: 700;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  margin: -14px -16px 14px;
+  padding: 10px 16px;
+  border-left: 3px solid var(--border);
+  background: rgba(255,255,255,.02);
+  display: flex; align-items: center; gap: 8px;
+}
+.ph-card__header--green  { color: var(--accent-green);  border-left-color: var(--accent-green);  background: rgba(57,211,83,.04); }
+.ph-card__header--purple { color: var(--accent-purple); border-left-color: var(--accent-purple); background: rgba(187,134,252,.04); }
+.ph-card__header--orange { color: var(--accent-orange); border-left-color: var(--accent-orange); background: rgba(240,136,62,.04); }
+.ph-card__header--cyan   { color: var(--accent-teal);   border-left-color: var(--accent-teal);   background: rgba(38,198,218,.04); }
+
+
+/* ── Stat chip ───────────────────────────────────────────────────────────── */
+.ph-stat { color: var(--fg-2); font-size: var(--text-11); white-space: nowrap; }
+.ph-stat > b { color: var(--fg-1); font-weight: 700; }
+.ph-stat--danger > b { color: var(--accent-red); }
+.ph-stat--primary > b { color: var(--accent-cyan); }
+
+
+/* ── Sidebar item ────────────────────────────────────────────────────────── */
+.ph-navitem {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 12px;
+  cursor: pointer;
+  color: var(--fg-1);
+  font-size: var(--text-11);
+  border-left: 2px solid transparent;
+  transition: color var(--t-slow), background var(--t-slow);
+  user-select: none;
+}
+.ph-navitem:hover { color: var(--fg-0); background: var(--bg-3); }
+.ph-navitem.is-active { color: var(--accent-cyan); border-left-color: var(--accent-cyan); background: rgba(0,217,255,.05); }
+.ph-navitem--admin.is-active { color: var(--accent-red);    border-left-color: var(--accent-red);    background: rgba(255,51,85,.05); }
+.ph-navitem--dpapi.is-active { color: var(--accent-purple); border-left-color: var(--accent-purple); background: rgba(187,134,252,.05); }
+.ph-navitem--vulns.is-active { color: var(--accent-orange); border-left-color: var(--accent-orange); background: rgba(240,136,62,.05); }
+.ph-navitem__icon { flex-shrink: 0; width: 18px; text-align: center; font-size: 14px; }
+.ph-navitem__name { flex: 1; overflow: hidden; white-space: nowrap; }
+
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+.ph-toast {
+  display: inline-block;
+  border: 1px solid var(--accent-green);
+  background: rgba(57,211,83,.12);
+  color: var(--accent-green);
+  padding: 5px 20px;
+  border-radius: 20px;
+  font-size: var(--text-11);
+  letter-spacing: var(--tracking-mega);
+}
+.ph-toast--error { border-color: var(--accent-red); background: rgba(255,51,85,.12); color: var(--accent-red); }
+
+
+/* ── Logo / wordmark ─────────────────────────────────────────────────────── */
+.ph-logo {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 4px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+}
+.ph-logo__pen {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.ph-logo__hub {
+  background: var(--accent-hub);
+  color: #000;
+  -webkit-text-fill-color: #000;
+  border-radius: 10px;
+  padding: 0 .28em .12em;
+  margin-left: .06em;
+}
+/* Compact topbar brand (solid cyan + glow, no capsule) */
+.ph-logo--brand {
+  color: var(--accent-cyan);
+  letter-spacing: 3px;
+  text-shadow: var(--glow-cyan);
+}

@@ -1,0 +1,72 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   COLORS — PenHub palette (verbatim from shell.css :root)
+
+   PenHub is a near-black "operator console". Backgrounds are a tight cool-gray
+   ramp; foreground is a soft blue-white; six neon accents carry every signal.
+   Accents are NEVER decorative — each one means something (see semantic block).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Background ramp (darkest → lightest surface) ───────────────────────── */
+  --bg-0: #0b0c10;   /* app canvas / deepest */
+  --bg-1: #111218;   /* topbar, sidebar, pager */
+  --bg-2: #161820;   /* toolbars, cards, login panel */
+  --bg-3: #1c1e28;   /* inputs, table head, hover surfaces */
+  --bg-4: #242630;   /* scrollbar thumb, raised hover */
+
+  /* ── Foreground ramp (brightest → dimmest text) ─────────────────────────── */
+  --fg-0: #e0e6f0;   /* primary text, values */
+  --fg-1: #8896a8;   /* secondary text, labels */
+  --fg-2: #647282;   /* muted text, hints, placeholders */
+
+  /* ── Accents (the six signal colors) ────────────────────────────────────── */
+  --accent-cyan:   #00d9ff;  /* a1 — primary / brand / SMB / focus */
+  --accent-green:  #39d353;  /* a2 — success / "live" / SSH / create */
+  --accent-orange: #f0883e;  /* a3 — warning / vulns / MSSQL / toolbox */
+  --accent-red:    #ff3355;  /* a4 — danger / PWN3D! / admin / exit */
+  --accent-purple: #bb86fc;  /* a5 — LDAP / DPAPI / smart-enrich */
+  --accent-teal:   #26c6da;  /* a6 — WINRM / export / xlsx */
+
+  /* ── Extended signal colors (used in protocol & vuln pills) ─────────────── */
+  --accent-amber:   #e6a817; /* admin-cred watchlist / skull marks */
+  --accent-gold:    #e8b84b; /* CUSTOM protocol */
+  --accent-pink:    #f06292; /* VNC protocol */
+  --accent-blue:    #4ea6dc; /* local-admin marks */
+  --accent-hub:     #f79a24; /* the "Hub" capsule in the logo */
+  --accent-crimson: #e94560; /* SMB-signing vuln */
+
+  /* ── Hairline border ────────────────────────────────────────────────────── */
+  --border: #1e2028;
+
+  /* ── Legacy short aliases (match source app's --a1…--a6, --fg0…) ────────── */
+  --bg0: var(--bg-0); --bg1: var(--bg-1); --bg2: var(--bg-2);
+  --bg3: var(--bg-3); --bg4: var(--bg-4);
+  --fg0: var(--fg-0); --fg1: var(--fg-1); --fg2: var(--fg-2);
+  --a1: var(--accent-cyan);   --a2: var(--accent-green); --a3: var(--accent-orange);
+  --a4: var(--accent-red);    --a5: var(--accent-purple); --a6: var(--accent-teal);
+
+  /* ── Semantic aliases ───────────────────────────────────────────────────── */
+  --text-primary:   var(--fg-0);
+  --text-secondary: var(--fg-1);
+  --text-muted:     var(--fg-2);
+
+  --surface-canvas: var(--bg-0);
+  --surface-chrome: var(--bg-1);   /* topbar / sidebar */
+  --surface-bar:    var(--bg-2);   /* toolbars / cards */
+  --surface-input:  var(--bg-3);
+  --surface-raised: var(--bg-4);
+
+  --signal-primary: var(--accent-cyan);
+  --signal-success: var(--accent-green);
+  --signal-warning: var(--accent-orange);
+  --signal-danger:  var(--accent-red);
+  --signal-info:    var(--accent-purple);
+
+  /* ── Translucent accent washes (active pill / hover fills) ──────────────── */
+  --wash-cyan:   rgba(0, 217, 255, .06);
+  --wash-green:  rgba(57, 211, 83, .07);
+  --wash-orange: rgba(240, 136, 62, .08);
+  --wash-red:    rgba(255, 51, 85, .07);
+  --wash-purple: rgba(187, 134, 252, .07);
+  --wash-teal:   rgba(38, 198, 218, .07);
+}

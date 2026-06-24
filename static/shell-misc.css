@@ -1,0 +1,30 @@
+/* ── Global search (Row 1) ───────────────────────────────────────────────── */
+.gsearch-wrap{position:relative;display:flex;align-items:center}
+.gsearch-wrap input{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--fg0);padding:4px 8px 4px 26px;border-radius:var(--radius);
+  font:inherit;outline:none;width:220px;transition:all .15s;opacity:.6
+}
+.gsearch-wrap input:focus,.gsearch-wrap input:not(:placeholder-shown){
+  opacity:1;border-color:var(--a3)
+}
+.gsearch-wrap::before{
+  content:"⌕";position:absolute;left:7px;color:var(--fg2);
+  font-size:13px;pointer-events:none
+}
+.gsearch-wrap input::placeholder{color:var(--fg2);font-size:10px;letter-spacing:.5px}
+#protoRow.gsearch-active .gsearch-wrap input{
+  border-color:var(--a3);background:rgba(240,136,62,.05);opacity:1
+}
+
+/* ── Shared module card base (used by HashKiller and Toolbox) ────────────── */
+.card{background:rgba(22,24,32,.70);border:1px solid var(--border);border-radius:6px;padding:14px 16px;width:100%;max-width:860px}
+.card-title{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--fg2);
+  text-transform:uppercase;margin-bottom:10px}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg1)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--fg2)}
+

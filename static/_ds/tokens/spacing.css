@@ -1,0 +1,48 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   SPACING / SIZING / RADII — PenHub is compact. Padding is measured in single
+   digits; the densest UI surfaces (toolbars, table cells) sit at 5–10px.
+   Corners are nearly square (4px), with a few intentionally rounder shapes
+   (pills 10px, cards/panels 6–14px) and one deliberately SHARP shape (CUSTOM
+   pill, 2px) used as a visual "this is different" cue.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Spacing scale ──────────────────────────────────────────────────────── */
+  --space-1:  2px;
+  --space-2:  4px;
+  --space-3:  6px;
+  --space-4:  8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 14px;
+  --space-8: 16px;
+  --space-9: 18px;
+  --space-10: 20px;
+  --space-12: 24px;
+
+  /* ── Radii ──────────────────────────────────────────────────────────────── */
+  --radius:        4px;    /* the global default (buttons, inputs, badges-ish) */
+  --radius-sharp:  2px;    /* CUSTOM pill — "off the grid" cue */
+  --radius-badge:  3px;    /* badges */
+  --radius-card:   6px;    /* module cards */
+  --radius-pill:  10px;    /* filter pills */
+  --radius-panel: 14px;    /* projects folder body, large panels */
+  --radius-round: 50%;     /* reset button, floating DB button */
+
+  /* ── Borders ────────────────────────────────────────────────────────────── */
+  --border-width: 1px;
+  --border-accent-width: 2px;   /* sidebar active item left rail */
+
+  /* ── Layout constants ───────────────────────────────────────────────────── */
+  --topbar-h:        44px;
+  --sidebar-w:      172px;
+  --sidebar-w-collapsed: 46px;
+  --projects-panel-w: min(92vw, 1080px);   /* @kind spacing */
+  --projects-panel-h: 572px;
+
+  /* ── Transitions (PenHub easing is fast & linear-ish) ───────────────────── */
+  --t-fast:  .13s;   /* @kind other */
+  --t-base:  .15s;   /* @kind other */
+  --t-slow:  .22s;   /* @kind other */
+  --ease:    ease;   /* @kind other */
+}

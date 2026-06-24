@@ -1,0 +1,551 @@
+#!/bin/bash
+# nxc_collector — настройка клиента NXC Collector
+#
+# Использование:
+#   nxc_collector --install
+#   nxc_collector -ws --server IP --port PORT --operator NAME --pass PASS --workspace NAME
+#   nxc_collector --bh-setup --bh-ip IP --bh-user U --bh-pass P --bh-port PORT
+#   nxc_collector --connection-test
+#   nxc_collector --show-options
+#   nxc_collector -upd
+
+set -euo pipefail
+
+CONF_FILE="$HOME/.nxc-collector.conf"
+NXC_CONF="$HOME/.nxc/nxc.conf"
+INSTALL_BIN="/usr/local/bin"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Defaults
+DEF_SERVER="http://192.168.0.1"
+DEF_PORT="322"
+DEF_OPERATOR="Operator"
+DEF_PASS="StrongPassword123"
+DEF_WORKSPACE="default"
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+_die() { echo "[!] $*" >&2; exit 1; }
+_ok()  { echo "[+] $*"; }
+_info(){ echo "[*] $*"; }
+
+_require_conf() {
+    [[ -f "$CONF_FILE" ]] || _die "Config not found: $CONF_FILE. Run: nxc_collector -ws first."
+}
+
+_conf_get() {
+    # _conf_get <key> [default]
+    local key="$1" default="${2:-}"
+    if [[ -f "$CONF_FILE" ]]; then
+        local val
+        val=$(grep -E "^\s*${key}\s*=" "$CONF_FILE" 2>/dev/null | head -1 | sed 's/.*=\s*//' | tr -d '\r')
+        echo "${val:-$default}"
+    else
+        echo "$default"
+    fi
+}
+
+_conf_set() {
+    # _conf_set <key> <value> [file]
+    local key="$1" value="$2" file="${3:-$CONF_FILE}"
+    if grep -qE "^\s*${key}\s*=" "$file" 2>/dev/null; then
+        sed -i "s|^\s*${key}\s*=.*|${key} = ${value}|" "$file"
+    else
+        echo "${key} = ${value}" >> "$file"
+    fi
+}
+
+_ensure_conf_section() {
+    local section="$1" file="${2:-$CONF_FILE}"
+    grep -q "^\[${section}\]" "$file" 2>/dev/null || echo -e "\n[${section}]" >> "$file"
+}
+
+_token() {
+    echo -n "$(_conf_get password "$DEF_PASS")" | sha256sum | awk '{print $1}'
+}
+
+# ---------------------------------------------------------------------------
+# --install [--rm]
+# ---------------------------------------------------------------------------
+
+# Determine where scripts are currently installed (or will be installed)
+_install_bin_dir() {
+    if [[ -w "$INSTALL_BIN" ]]; then
+        echo "$INSTALL_BIN"
+    else
+        echo "$HOME/bin"
+    fi
+}
+
+_find_installed() {
+    # Print path of installed binary if found, empty string otherwise
+    local name="$1"
+    if [[ -x "$INSTALL_BIN/$name" ]]; then
+        echo "$INSTALL_BIN/$name"
+    elif [[ -x "$HOME/bin/$name" ]]; then
+        echo "$HOME/bin/$name"
+    else
+        echo ""
+    fi
+}
+
+do_install() {
+    local updater="$SCRIPT_DIR/nxc_updater.py"
+    local self="$SCRIPT_DIR/nxc_collector"
+    local nxce_src="$SCRIPT_DIR/nxce.py"
+
+    [[ -f "$updater" ]] || _die "nxc_updater.py not found in $SCRIPT_DIR"
+
+    # Detect existing installation
+    local existing_updater existing_collector existing_nxce
+    existing_updater=$(_find_installed "nxc_updater")
+    existing_collector=$(_find_installed "nxc_collector")
+    existing_nxce=$(_find_installed "nxce")
+
+    if [[ -n "$existing_updater" || -n "$existing_collector" || -n "$existing_nxce" ]]; then
+        _info "Existing installation detected — updating..."
+        [[ -n "$existing_updater"   ]] && _info "  Found: $existing_updater"
+        [[ -n "$existing_collector" ]] && _info "  Found: $existing_collector"
+        [[ -n "$existing_nxce"      ]] && _info "  Found: $existing_nxce"
+    else
+        _info "Installing nxc_collector client (fresh install)..."
+    fi
+
+    local bin_dir
+    bin_dir=$(_install_bin_dir)
+    mkdir -p "$bin_dir"
+
+    # Install nxc_updater
+    cp "$updater" "$bin_dir/nxc_updater"
+    chmod +x "$bin_dir/nxc_updater"
+    _ok "nxc_updater → $bin_dir/nxc_updater"
+
+    # Install nxc_collector
+    cp "$self" "$bin_dir/nxc_collector"
+    chmod +x "$bin_dir/nxc_collector"
+    _ok "nxc_collector → $bin_dir/nxc_collector"
+
+    # Install nxce (PWN3D Extractor) — optional, only if present in source dir
+    if [[ -f "$nxce_src" ]]; then
+        cp "$nxce_src" "$bin_dir/nxce"
+        chmod +x "$bin_dir/nxce"
+        _ok "nxce → $bin_dir/nxce"
+    else
+        _info "nxce.py not found in $SCRIPT_DIR — skipping nxce install"
+    fi
+
+    # Install NXC custom modules to ~/.nxc/modules/
+    local nxc_modules_dir="$HOME/.nxc/modules"
+    local modules_installed=0
+    for module in collector_dc.py collector_hosts.py; do
+        if [[ -f "$SCRIPT_DIR/$module" ]]; then
+            mkdir -p "$nxc_modules_dir"
+            cp "$SCRIPT_DIR/$module" "$nxc_modules_dir/$module"
+            _ok "NXC module: $module → $nxc_modules_dir/$module"
+            modules_installed=$((modules_installed + 1))
+        else
+            _info "NXC module $module not found in $SCRIPT_DIR — skipping"
+        fi
+    done
+    [[ $modules_installed -gt 0 ]] && _info "NXC modules installed. Usage: nxc smb <target> -u <user> -p <pass> -M collector_hosts"
+
+    # Ensure ~/bin is in PATH if needed
+    if [[ "$bin_dir" == "$HOME/bin" ]] && ! echo "$PATH" | grep -q "$HOME/bin"; then
+        echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
+        echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.zshrc" 2>/dev/null || true
+        _info "Added ~/bin to PATH in .bashrc/.zshrc — run: source ~/.bashrc"
+    fi
+
+    # Create default config only on fresh install
+    if [[ ! -f "$CONF_FILE" ]]; then
+        cat > "$CONF_FILE" <<EOF
+[collector]
+server    = ${DEF_SERVER}
+port      = ${DEF_PORT}
+password  = ${DEF_PASS}
+operator  = ${DEF_OPERATOR}
+workspace = ${DEF_WORKSPACE}
+EOF
+        _ok "Default config created: $CONF_FILE"
+        _info "Edit it with: nxc_collector -ws --server <IP> --operator <NAME> --workspace <WS>"
+    else
+        _info "Config preserved: $CONF_FILE"
+    fi
+
+    # Setup cron (every 10 min + @reboot), replacing old entries
+    local updater_cmd="$bin_dir/nxc_updater"
+    local cron_log="$HOME/.nxc-collector.log"
+
+    local tmp
+    tmp=$(mktemp)
+    (crontab -l 2>/dev/null | grep -vE "nxc_updater|nxc_collector") > "$tmp" || true
+    echo "*/10 * * * * ${updater_cmd} >> ${cron_log} 2>&1"   >> "$tmp"
+    echo "@reboot sleep 30 && ${updater_cmd} >> ${cron_log} 2>&1" >> "$tmp"
+    crontab "$tmp"
+    rm -f "$tmp"
+    _ok "Cron configured: every 10 min + @reboot"
+
+    echo ""
+    if [[ -n "$existing_updater" || -n "$existing_collector" ]]; then
+        _ok "Update complete."
+    else
+        _ok "Installation complete. Next steps:"
+        _ok "  nxc_collector -ws --server <IP> --port <PORT> --pass <PASS> --workspace <WS> --operator <NAME>"
+        _ok "  nxc_collector --connection-test"
+    fi
+}
+
+do_uninstall() {
+    _info "Removing nxc_collector installation..."
+
+    local removed=0
+
+    # Remove binaries from all known locations
+    for name in nxc_updater nxc_collector nxce; do
+        for loc in "$INSTALL_BIN/$name" "$HOME/bin/$name"; do
+            if [[ -f "$loc" ]]; then
+                rm -f "$loc"
+                _ok "Removed: $loc"
+                removed=$((removed + 1))
+            fi
+        done
+    done
+
+    # Remove NXC custom modules
+    for module in collector_dc.py collector_hosts.py; do
+        local mod_path="$HOME/.nxc/modules/$module"
+        if [[ -f "$mod_path" ]]; then
+            rm -f "$mod_path"
+            _ok "Removed: $mod_path"
+            removed=$((removed + 1))
+        fi
+    done
+
+    # Remove cron entries
+    if crontab -l 2>/dev/null | grep -qE "nxc_updater|nxc_collector"; then
+        local tmp
+        tmp=$(mktemp)
+        (crontab -l 2>/dev/null | grep -vE "nxc_updater|nxc_collector") > "$tmp" || true
+        crontab "$tmp"
+        rm -f "$tmp"
+        _ok "Cron entries removed"
+    else
+        _info "No cron entries found"
+    fi
+
+    if [[ -f "$HOME/.nxc-collector-local.db" ]]; then
+        _info "Local DB kept: $HOME/.nxc-collector-local.db  (remove manually if needed)"
+    fi
+
+    # Config and log — keep or remove?
+    if [[ -f "$CONF_FILE" ]]; then
+        _info "Config kept: $CONF_FILE  (remove manually if needed)"
+    fi
+    if [[ -f "$HOME/.nxc-collector.log" ]]; then
+        _info "Log kept: $HOME/.nxc-collector.log  (remove manually if needed)"
+    fi
+
+    if [[ $removed -eq 0 ]]; then
+        _info "Nothing was installed — nothing to remove"
+    else
+        _ok "Uninstall complete ($removed files removed)"
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# -ws / --workspace-setup
+# ---------------------------------------------------------------------------
+
+do_workspace_setup() {
+    local server="" port="" operator="" pass="" workspace=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --server)    server="$2";    shift 2 ;;
+            --port)      port="$2";      shift 2 ;;
+            --operator)  operator="$2";  shift 2 ;;
+            --pass)      pass="$2";      shift 2 ;;
+            --workspace) workspace="$2"; shift 2 ;;
+            *) _die "Unknown option: $1" ;;
+        esac
+    done
+
+    [[ -n "$server" || -n "$port" || -n "$operator" || -n "$pass" || -n "$workspace" ]] \
+        || _die "--workspace-setup requires at least one option (--server, --port, --operator, --pass, --workspace)"
+
+    # Create config file if not exists
+    if [[ ! -f "$CONF_FILE" ]]; then
+        mkdir -p "$(dirname "$CONF_FILE")"
+        echo "[collector]" > "$CONF_FILE"
+    fi
+
+    _ensure_conf_section "collector"
+
+    # Normalize server URL: add http:// if no scheme provided
+    if [[ -n "$server" ]] && [[ "$server" != http://* && "$server" != https://* ]]; then
+        server="http://${server}"
+    fi
+    [[ -n "$server"    ]] && _conf_set "server"    "$server"
+    [[ -n "$port"      ]] && _conf_set "port"      "$port"
+    [[ -n "$operator"  ]] && _conf_set "operator"  "$operator"
+    [[ -n "$pass"      ]] && _conf_set "password"  "$pass"
+    [[ -n "$workspace" ]] && {
+        _conf_set "workspace" "$workspace"
+        # Update nxc.conf workspace
+        if [[ -f "$NXC_CONF" ]]; then
+            sed -i "s|^\s*workspace\s*=.*|workspace = ${workspace}|" "$NXC_CONF"
+            _ok "Updated nxc.conf workspace → $workspace"
+        fi
+        # Create nxc workspace
+        if command -v nxcdb &>/dev/null; then
+            _info "Creating nxc workspace: $workspace"
+            nxcdb -cw "$workspace" && _ok "nxc workspace '$workspace' created"
+        else
+            _info "nxcdb not found — create workspace manually: nxcdb -cw $workspace"
+        fi
+    }
+
+    _ok "Config updated: $CONF_FILE"
+    do_show_options
+}
+
+# ---------------------------------------------------------------------------
+# --bh-setup
+# ---------------------------------------------------------------------------
+
+do_bh_setup() {
+    local bh_ip="" bh_login="" bh_pass="" bh_port="" bh_enable=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --bh-ip)     bh_ip="$2";     shift 2 ;;
+            --bh-login)  bh_login="$2";  shift 2 ;;
+            --bh-pass)   bh_pass="$2";   shift 2 ;;
+            --bh-port)   bh_port="$2";   shift 2 ;;
+            --bh-enable) bh_enable="$2"; shift 2 ;;
+            *) _die "Unknown option: $1" ;;
+        esac
+    done
+
+    [[ -n "$bh_ip" || -n "$bh_login" || -n "$bh_pass" || -n "$bh_port" || -n "$bh_enable" ]] \
+        || _die "--bh-setup requires at least one option"
+
+    [[ -f "$NXC_CONF" ]] || _die "nxc.conf not found: $NXC_CONF"
+
+    [[ -n "$bh_ip"     ]] && _conf_set "bh_uri"     "$bh_ip"     "$NXC_CONF"
+    [[ -n "$bh_login"  ]] && _conf_set "bh_user"    "$bh_login"  "$NXC_CONF"
+    [[ -n "$bh_pass"   ]] && _conf_set "bh_pass"    "$bh_pass"   "$NXC_CONF"
+    [[ -n "$bh_port"   ]] && _conf_set "bh_port"    "$bh_port"   "$NXC_CONF"
+    [[ -n "$bh_enable" ]] && {
+        local enabled="False"
+        [[ "$bh_enable" =~ ^(true|True|1|yes)$ ]] && enabled="True"
+        _conf_set "bh_enabled" "$enabled" "$NXC_CONF"
+    }
+
+    _ok "BloodHound settings updated: $NXC_CONF"
+}
+
+# ---------------------------------------------------------------------------
+# --connection-test
+# ---------------------------------------------------------------------------
+
+do_connection_test() {
+    _require_conf
+    local server port token url status
+
+    server=$(_conf_get server "$DEF_SERVER")
+    port=$(_conf_get port "$DEF_PORT")
+    token=$(_token)
+
+    # Build URL with port if not already in server
+    if echo "$server" | grep -qE ":\d+$"; then
+        url="${server}/api/workspaces"
+    else
+        url="${server}:${port}/api/workspaces"
+    fi
+
+    _info "Testing connection: $url"
+
+    if ! command -v curl &>/dev/null; then
+        _die "curl not found — install it: apt-get install curl"
+    fi
+
+    status=$(curl -sf -w "%{http_code}" -o /dev/null \
+        -H "X-Auth-Token: $token" "$url" 2>/dev/null) || true
+
+    case "$status" in
+        200) _ok "Connection OK (HTTP 200)" ;;
+        401) _die "Authentication failed (HTTP 401) — check --pass" ;;
+        403) _die "Forbidden (HTTP 403) — check --pass" ;;
+        "")  _die "Cannot connect to $url — server offline or wrong address?" ;;
+        *)   _die "Unexpected response: HTTP $status" ;;
+    esac
+}
+
+# ---------------------------------------------------------------------------
+# --show-options
+# ---------------------------------------------------------------------------
+
+do_show_options() {
+    echo ""
+    echo "=== Collector config ($CONF_FILE) ==="
+    if [[ -f "$CONF_FILE" ]]; then
+        # Hide password
+        sed 's/^\(\s*password\s*=\s*\).*/\1***/' "$CONF_FILE"
+    else
+        echo "(not found)"
+    fi
+
+    echo ""
+    echo "=== nxc config workspace ($NXC_CONF) ==="
+    if [[ -f "$NXC_CONF" ]]; then
+        grep -E "^\s*workspace\s*=" "$NXC_CONF" || echo "(not set)"
+    else
+        echo "(not found)"
+    fi
+
+    echo ""
+    echo "=== BloodHound ($NXC_CONF) ==="
+    if [[ -f "$NXC_CONF" ]]; then
+        grep -A5 "^\[BloodHound\]" "$NXC_CONF" | grep -vE "^\[BloodHound" | grep -v "^$" | head -10
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# -upd / --update
+# ---------------------------------------------------------------------------
+
+do_update() {
+    # Priority: source dir (always up-to-date) → installed in PATH → ~/bin
+    if [[ -f "$SCRIPT_DIR/nxc_updater.py" ]]; then
+        python3 "$SCRIPT_DIR/nxc_updater.py"
+    elif command -v nxc_updater &>/dev/null; then
+        nxc_updater
+    elif [[ -f "$HOME/bin/nxc_updater" ]]; then
+        python3 "$HOME/bin/nxc_updater"
+    else
+        _die "nxc_updater not found. Run: nxc_collector --install"
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# Usage
+# ---------------------------------------------------------------------------
+
+print_usage() {
+    cat <<'EOF'
+nxc_collector — NXC Collector client setup
+
+Usage:
+  nxc_collector --install
+      Install (or update) client scripts and setup cron.
+      Installs: nxc_updater, nxc_collector, nxce (if nxce.py present).
+      NXC modules: collector_dc.py → ~/.nxc/modules/collector_dc.py
+                   collector_hosts.py → ~/.nxc/modules/collector_hosts.py
+      If already installed — overwrites scripts, updates cron, keeps config.
+      Must be run from the directory containing nxc_updater.py.
+
+  nxc_collector --install -rm
+      Uninstall: remove scripts (nxc_updater, nxc_collector, nxce),
+      NXC modules, and cron entries. Config and log are kept.
+
+  nxc_collector -ws [options]
+  nxc_collector --workspace-setup [options]
+      Configure the collector client. Options:
+        --server     <http://ip>       Collector server URL
+        --port       <port>            Collector server port (default: 322)
+        --operator   <name>            Your callsign
+        --pass       <password>        Collector server password
+        --workspace  <name>            nxc workspace name (creates it too)
+
+  nxc_collector --bh-setup [options]
+      Configure BloodHound in ~/.nxc/nxc.conf. Options:
+        --bh-ip      <ip>              BloodHound server IP
+        --bh-login   <user>            BloodHound username
+        --bh-pass    <password>        BloodHound password
+        --bh-port    <port>            BloodHound bolt port (default: 7687)
+        --bh-enable  <true|false>      Enable BloodHound integration
+
+  nxc_collector --connection-test
+      Test connection to the collector server.
+
+  nxc_collector --show-options
+      Show current configuration.
+
+  nxc_collector -upd
+  nxc_collector --update
+      Force an immediate sync.
+      After sync, local DB (~/.nxc/workspaces/<workspace>/nxc-collector.db) is updated — use nxce.
+
+nxce — nxc PWN3D Extractor (installed alongside, run separately):
+  nxce smb                              all SMB admin entries
+  nxce smb -u Administrator             where Administrator is PWN3D
+  nxce smb -i 10.10.10.0/24            admin entries in subnet
+  nxce smb -d corp.local --nxc         ready-to-run nxc commands
+  nxce all -u Administrator            admin across all protocols
+  nxce smb --brute /tmp/spray          export credential files for nxc spray
+  nxce smb -h                           full flag list
+
+Examples:
+  # First time setup
+  nxc_collector --install
+  nxc_collector -ws --server http://192.168.0.22 --port 322 --pass "P@ss" \
+                    --workspace Client2024 --operator vasya
+
+  # Switch workspace mid-engagement
+  nxc_collector -ws --workspace NewClient --operator vasya
+
+  # Enable BloodHound
+  nxc_collector --bh-setup --bh-ip 192.168.0.3 --bh-enable true
+
+  # Manual sync + extract
+  nxc_collector -upd
+  nxce smb -d corp.local --nxc -o targets.txt
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+[[ $# -eq 0 ]] && { print_usage; exit 0; }
+
+case "$1" in
+    --install)
+        shift
+        if [[ "${1:-}" == "-rm" || "${1:-}" == "--rm" ]]; then
+            do_uninstall
+        elif [[ $# -gt 0 ]]; then
+            _die "--install accepts no arguments (use --install -rm to uninstall)"
+        else
+            do_install
+        fi
+        ;;
+    -ws|--workspace-setup)
+        shift
+        do_workspace_setup "$@"
+        ;;
+    --bh-setup)
+        shift
+        do_bh_setup "$@"
+        ;;
+    --connection-test)
+        do_connection_test
+        ;;
+    --show-options)
+        do_show_options
+        ;;
+    -upd|--update)
+        do_update
+        ;;
+    -h|--help)
+        print_usage
+        ;;
+    *)
+        echo "[!] Unknown command: $1" >&2
+        print_usage
+        exit 1
+        ;;
+esac

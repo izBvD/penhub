@@ -1,0 +1,99 @@
+:root{
+  --bg0:#0b0c10;--bg1:#111218;--bg2:#161820;--bg3:#1c1e28;--bg4:#242630;
+  --fg0:#e0e6f0;--fg1:#8896a8;--fg2:#647282;
+  --a1:#00d9ff;--a2:#39d353;--a3:#f0883e;--a4:#ff3355;--a5:#bb86fc;--a6:#26c6da;
+  --border:#1e2028;--radius:4px;
+  --topbar-h:44px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ── Body + background gradient ─────────────────────────────────────────── */
+body{
+  background:
+    radial-gradient(ellipse 70% 60% at 4% 96%,  rgba(0,217,255,.055) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 55% at 96% 4%,  rgba(57,211,83,.04)  0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(187,134,252,.025) 0%, transparent 60%),
+    var(--bg0);
+  color:var(--fg0);
+  font:12px/1.5 "JetBrains Mono","Fira Code","Cascadia Code",monospace;
+  height:100vh;display:flex;flex-direction:column;overflow:hidden
+}
+
+
+/* ── Shared top bar ──────────────────────────────────────────────────────── */
+#topBar{
+  display:none;
+  align-items:center;gap:10px;
+  padding:0 16px;
+  height:var(--topbar-h);min-height:var(--topbar-h);
+  background:var(--bg1);
+  border-bottom:1px solid rgba(0,217,255,.14);
+  flex-shrink:0;
+  position:relative;
+  z-index:20;
+}
+/* Subtle top-bar glow line */
+#topBar::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,217,255,.18) 30%,rgba(57,211,83,.10) 70%,transparent);
+  pointer-events:none
+}
+.brand{
+  color:var(--a1);font-weight:700;font-size:15px;letter-spacing:3px;
+  text-shadow:0 0 18px rgba(0,217,255,.5);flex-shrink:0;
+  animation:brand-glitch 12s infinite
+}
+@keyframes brand-glitch{
+  0%,82%,100%{transform:none;color:var(--a1);text-shadow:0 0 18px rgba(0,217,255,.5)}
+  82.4%{transform:translateX(-3px) skewX(-6deg);color:#e8faff;text-shadow:3px 0 rgba(255,51,85,.6),-1px 0 rgba(0,217,255,.85)}
+  82.8%{transform:translateX(2px);color:var(--a1);text-shadow:-2px 0 rgba(0,217,255,.75),2px 0 rgba(255,51,85,.5)}
+  83.2%{transform:translateX(-1px) skewX(3deg);color:#fff;text-shadow:0 0 10px rgba(0,217,255,.7)}
+  83.6%{transform:none;color:var(--a1);text-shadow:0 0 18px rgba(0,217,255,.5)}
+}
+.tb-back{
+  color:var(--a3);font-size:11px;padding:3px 10px;letter-spacing:.5px;
+  border:1px solid rgba(240,136,62,.30);
+  background:linear-gradient(145deg,rgba(255,255,255,.03) 0%,rgba(240,136,62,.06) 55%,rgba(240,136,62,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)
+}
+.tb-back:hover{
+  border-color:rgba(240,136,62,.55);
+  background:linear-gradient(145deg,rgba(255,255,255,.05) 0%,rgba(240,136,62,.09) 55%,rgba(240,136,62,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+/* Current page / project name */
+.tb-page{
+  color:var(--fg1);font-size:11px;letter-spacing:1px;
+  border-left:1px solid var(--border);padding-left:12px;
+  max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+
+/* ── App ─────────────────────────────────────────────────────────────────── */
+#appView{display:none;flex-direction:row;flex:1;overflow:hidden;min-height:0}
+#appContent{
+  display:flex;flex:1;flex-direction:column;overflow:hidden;min-width:0;
+  background:
+    repeating-linear-gradient(135deg,transparent 0,transparent 90px,rgba(57,211,83,.018) 90px,rgba(57,211,83,.018) 91px),
+    repeating-linear-gradient( 45deg,transparent 0,transparent 90px,rgba(57,211,83,.018) 90px,rgba(57,211,83,.018) 91px),
+    radial-gradient(ellipse 55% 45% at 85% 12%, rgba(57,211,83,.055) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 40% at 10% 88%, rgba(0,217,255,.040) 0%,transparent 55%);
+}
+#mod-hashkiller{flex-direction:column;min-width:0}
+
+/* ── Toolbars ────────────────────────────────────────────────────────────── */
+.toolbar{
+  display:flex;align-items:center;gap:6px;padding:6px 10px;
+  border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap
+}
+.toolbar.row1{background:var(--bg2)}
+.toolbar.row2{background:var(--bg2);border-top:1px solid var(--border)}
+.toolbar.row3{background:var(--bg1);border-top:1px solid rgba(255,51,85,.18);display:none}
+.toolbar.row3.visible{display:flex}
+
+/* ── Stats ───────────────────────────────────────────────────────────────── */
+.stats{display:flex;gap:12px;align-items:center}
+.stat{color:var(--fg2);font-size:11px;white-space:nowrap}
+.stat b{color:var(--fg1)}
+.stat.s-admin b{color:var(--a4)}
+.spacer{flex:1}
+

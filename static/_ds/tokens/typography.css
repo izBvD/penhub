@@ -1,0 +1,61 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY — PenHub is mono-only. One family, tight sizes, heavy tracking on
+   labels. Body text runs small (11–12px) because the product is data-dense;
+   wordmarks and page lettering go enormous.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Families ───────────────────────────────────────────────────────────── */
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+  --font-base: var(--font-mono);   /* there is no second family — mono everywhere */
+
+  /* ── Sizes (px — the app is unapologetically pixel-tuned) ───────────────── */
+  --text-9:   9px;    /* micro labels (sidebar section, stat labels) */
+  --text-10: 10px;    /* badges, hints, card titles */
+  --text-11: 11px;    /* default UI text: pills, buttons, table cells */
+  --text-12: 12px;    /* body default */
+  --text-13: 13px;    /* project name, module titles */
+  --text-15: 15px;    /* topbar brand */
+  --text-17: 17px;    /* project row name, big stat values */
+  --text-22: 22px;    /* compact login logo */
+  --text-24: 24px;    /* project stat values */
+  --text-76: 76px;    /* full login wordmark */
+
+  /* ── Weights ────────────────────────────────────────────────────────────── */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-black:    900;   /* PROJECTS page lettering only */
+
+  /* ── Line heights ───────────────────────────────────────────────────────── */
+  --leading-tight: 1;
+  --leading-snug:  1.5;
+  --leading-loose: 1.8;   /* how-to / pre blocks */
+
+  /* ── Letter-spacing (tracking is a core PenHub signature) ───────────────── */
+  --tracking-tight:  -0.01em;  /* huge display lettering */
+  --tracking-normal: 0;
+  --tracking-wide:   0.5px;    /* names, dense labels */
+  --tracking-wider:  1px;      /* page name, inputs */
+  --tracking-widest: 2px;      /* sidebar section labels, card titles */
+  --tracking-mega:   3px;      /* brand, toast, login button */
+  --tracking-ultra:  5px;      /* login wordmark / sub-label */
+
+  /* ── Semantic type roles ────────────────────────────────────────────────── */
+  --text-body:        var(--text-12);
+  --text-ui:          var(--text-11);
+  --text-label:       var(--text-10);
+  --text-microlabel:  var(--text-9);
+  --text-title:       var(--text-13);
+  --text-brand:       var(--text-15);
+}
+
+/* A label utility class capturing the recurring micro-label treatment:
+   uppercase, tiny, heavily tracked, muted. */
+.ph-microlabel {
+  font-size: var(--text-9);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}

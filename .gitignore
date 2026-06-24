@@ -1,0 +1,18 @@
+# databases
+*.db
+*.db-wal
+*.db-shm
+
+# operator config and logs
+*.conf
+*.log
+
+# hashkiller inbox (server-side uploads)
+hk_inbox/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/

@@ -1,0 +1,332 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PenHub — Projects page (REDESIGN)
+   Drop-in replacement for static/shell-projects.css
+
+   • Modern neon "PROJECTS" sign (glass tubes + bloom, flickering O)
+   • Win11-style frosted-glass window + corner close (✕)
+   • Win11-style Active/Archive tabs
+   • Modern flat/tinted buttons (DB / NEW / ARCHIVE / ACTIVATE)
+
+   Uses ONLY the existing shell.css :root vars (--a1..a4, --bg*, --fg*, --border).
+   No web fonts, no external assets — 100% offline.
+   Requires the matching markup in collector/_frontend/_html.py (see _html_wsView.html).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Projects view canvas ──────────────────────────────────────────────── */
+#wsView{
+  --win-h:min(70vh,520px);
+  display:none;                       /* JS toggles to flex when shown */
+  flex-direction:column;align-items:center;justify-content:center;
+  flex:1;min-height:0;position:relative;isolation:isolate;overflow:hidden;
+  background:
+    repeating-linear-gradient(135deg, transparent 0, transparent 90px, rgba(57,211,83,.045) 90px, rgba(57,211,83,.045) 91px),
+    repeating-linear-gradient( 45deg, transparent 0, transparent 90px, rgba(57,211,83,.045) 90px, rgba(57,211,83,.045) 91px),
+    radial-gradient(ellipse 80% 60% at 50% 22%, rgba(0,217,255,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 70% at 50% 88%, rgba(57,211,83,.03) 0%, transparent 60%),
+    var(--bg0);
+}
+
+#wsRain { z-index:-1; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEON SIGN — modern "PROJECTS" (glass tubes + bloom, flickering O)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.neon-sign{
+  position:absolute;
+  top:calc(50% - (var(--win-h) / 2) - 64px - min(7vw, 86px));
+  left:0;right:0;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:0 2.8vw;
+  pointer-events:none;user-select:none;
+  z-index:0;
+  animation:ph-poweron 2.6s linear forwards, ph-hum 4s 2.6s ease-in-out infinite;
+}
+.nl{
+  position:relative;
+  font-weight:900;
+  font-size:min(19vw,248px);
+  line-height:.82;
+  letter-spacing:-.015em;
+  color:#f4fffb;
+  -webkit-text-stroke:1px rgba(150,248,232,.5);
+  text-shadow:
+    0 0 4px #ffffff,
+    0 0 9px #d8fff7,
+    0 0 17px #1ae7ff,
+    0 0 30px #00cfff,
+    0 0 50px #33d36b,
+    0 0 86px #39d353,
+    0 0 140px rgba(57,211,83,.45);
+}
+.nl:nth-child(3),.nl:nth-child(4),.nl:nth-child(5){
+  text-shadow:
+    0 0 4px #ffffff,
+    0 0 9px #ddfff0,
+    0 0 17px #4cf07d,
+    0 0 32px #39d353,
+    0 0 56px #2bd36a,
+    0 0 92px #39d353,
+    0 0 150px rgba(57,211,83,.5);
+}
+.neon-sign::after{
+  content:'';position:absolute;left:-1%;right:-1%;top:10%;bottom:-10%;
+  background:
+    radial-gradient(ellipse 42% 130% at 20% 52%, rgba(0,217,255,.16), transparent 68%),
+    radial-gradient(ellipse 52% 140% at 52% 56%, rgba(57,211,83,.18), transparent 70%),
+    radial-gradient(ellipse 42% 130% at 84% 52%, rgba(0,217,255,.14), transparent 68%);
+  filter:blur(40px);
+  z-index:-1;
+}
+@keyframes ph-hum{
+  0%,100%{filter:brightness(1)}
+  25%{filter:brightness(1.04)}
+  40%{filter:brightness(.98)}
+  62%{filter:brightness(1.05)}
+  80%{filter:brightness(.99)}
+}
+.nl.flicker{animation:ph-flicker 6.2s 2.6s infinite}
+@keyframes ph-poweron{
+  /* hold dim ~0.5s */
+  0%    {opacity:.08;filter:brightness(.4)}
+  19%   {opacity:.08;filter:brightness(.4)}
+  /* snap ON — flicker 1 */
+  19.5% {opacity:1;  filter:brightness(1.1)}
+  23%   {opacity:1;  filter:brightness(1.1)}
+  /* snap OFF */
+  23.5% {opacity:.08;filter:brightness(.4)}
+  /* hold dim ~0.5s */
+  42%   {opacity:.08;filter:brightness(.4)}
+  /* snap ON — flicker 2 */
+  42.5% {opacity:1;  filter:brightness(1.1)}
+  46%   {opacity:1;  filter:brightness(1.1)}
+  /* snap OFF */
+  46.5% {opacity:.08;filter:brightness(.4)}
+  /* brief hold */
+  54%   {opacity:.08;filter:brightness(.4)}
+  /* snap to full — stays on */
+  54.5% {opacity:1;  filter:brightness(1)}
+  100%  {opacity:1;  filter:brightness(1)}
+}
+@keyframes ph-flicker{
+  0%,100%{opacity:1}
+  8%{opacity:1}      9%{opacity:.22}    9.6%{opacity:1}   10.2%{opacity:.32}  10.8%{opacity:1}
+  29%{opacity:1}     30%{opacity:.16}   31.5%{opacity:.5} 32%{opacity:.14}    33%{opacity:.9}   33.6%{opacity:.28} 34%{opacity:1}
+  55%{opacity:1}     56%{opacity:.2}    57%{opacity:1}
+  78%{opacity:1}     79%{opacity:.1}    80%{opacity:.66}  80.6%{opacity:.18}  81.4%{opacity:1}  82%{opacity:.36}   82.6%{opacity:1}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   WINDOW — Win11 frosted-glass panel
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ws-window{
+  position:relative;z-index:2;
+  width:min(92vw,1040px);
+  height:var(--win-h);
+  display:flex;flex-direction:column;
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(22,26,35,.82) 0%, rgba(12,14,20,.9) 100%);
+  -webkit-backdrop-filter:blur(22px) saturate(1.25);
+  backdrop-filter:blur(22px) saturate(1.25);
+  border:1px solid rgba(140,165,180,.16);
+  box-shadow:
+    0 44px 100px rgba(0,0,0,.72),
+    0 0 0 1px rgba(0,0,0,.5),
+    0 0 70px rgba(57,211,83,.05),
+    inset 0 1px 0 rgba(255,255,255,.09),
+    inset 0 0 0 1px rgba(255,255,255,.015);
+  overflow:hidden;
+}
+
+/* ── Title / tab bar ─────────────────────────────────────────────────────── */
+.ws-titlebar{
+  flex-shrink:0;height:48px;
+  display:flex;align-items:flex-end;
+  padding:0 6px 0 14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0));
+  border-bottom:1px solid rgba(140,165,180,.12);
+  position:relative;
+}
+.ws-tabs{display:flex;align-items:flex-end;gap:4px;height:100%;padding-bottom:0}
+.ws-tab{
+  position:relative;
+  appearance:none;font:inherit;cursor:pointer;
+  height:36px;align-self:flex-end;
+  padding:0 20px;
+  display:flex;align-items:center;gap:8px;
+  font-size:12.5px;letter-spacing:1px;
+  color:var(--fg2);
+  background:transparent;
+  border:1px solid transparent;border-bottom:none;
+  border-radius:10px 10px 0 0;
+  transition:background .16s,color .16s;
+}
+.ws-tab .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5;box-shadow:0 0 6px currentColor}
+.ws-tab:hover:not(.active){background:rgba(255,255,255,.05);color:var(--fg1)}
+.ws-tab.active{
+  color:var(--fg0);
+  background:linear-gradient(180deg, rgba(40,46,58,.55), rgba(20,24,32,.2));
+  border-color:rgba(140,165,180,.16);
+}
+.ws-tab.active .dot{opacity:1}
+.ws-tab.active[data-tab="active"] .dot{color:var(--a2)}
+.ws-tab.active[data-tab="archive"] .dot{color:var(--a3)}
+.ws-tab.active[data-tab="recycle"] .dot{color:var(--a4)}
+.ws-tab.active::after{
+  content:'';position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px;
+  background:linear-gradient(135deg,#00e5ff 15%,#39d353 60%,#00e5ff 100%);
+  box-shadow:0 0 10px rgba(57,211,83,.6);
+}
+.ws-tb-spacer{flex:1}
+.ws-tb-actions{display:flex;align-items:center;gap:10px;padding-bottom:7px}
+
+/* big Windows-style close (✕) — top-right corner */
+.ws-close{
+  align-self:flex-start;
+  margin:5px 2px 0 8px;
+  width:40px;height:34px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font:inherit;font-size:17px;line-height:1;cursor:pointer;
+  color:var(--fg1);
+  border:1px solid rgba(136,150,168,.18);border-radius:8px;
+  background:linear-gradient(145deg,rgba(255,255,255,.02) 0%,rgba(136,150,168,.04) 55%,rgba(136,150,168,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  transition:background .15s,color .15s,border-color .15s;
+}
+.ws-close:hover{background:#ff3355;color:#fff;border-color:transparent;box-shadow:none}
+.ws-close:active{background:#d81e40}
+.ws-close:focus-visible{outline:2px solid rgba(0,217,255,.5);outline-offset:2px}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTONS — modern flat / tinted (scoped to .ws-window to avoid conflicting
+   with the global .btn defined in shell.css for topbar/toolbar buttons)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ws-window .btn{
+  appearance:none;font:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  font-size:11.5px;letter-spacing:1px;font-weight:600;
+  padding:8px 15px;border-radius:9px;
+  border:1px solid rgba(136,150,168,.22);
+  background:linear-gradient(145deg,rgba(255,255,255,.03) 0%,rgba(136,150,168,.05) 55%,rgba(136,150,168,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  color:var(--fg1);
+  transition:background .16s,border-color .16s,color .16s,box-shadow .16s,transform .06s;
+}
+.ws-window .btn:active{transform:translateY(.5px)}
+.ws-window .btn:focus-visible{outline:2px solid rgba(0,217,255,.55);outline-offset:2px}
+.ws-window .btn .gi{font-size:13px;line-height:1;opacity:.85}
+
+.ws-window .btn--ghost:hover{
+  background:linear-gradient(145deg,rgba(255,255,255,.05) 0%,rgba(136,150,168,.08) 55%,rgba(136,150,168,.02) 100%);
+  border-color:rgba(140,165,180,.40);color:var(--fg0);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+
+.ws-window .btn--primary{
+  color:#84ec9d;
+  border:1px solid rgba(57,211,83,.30);
+  background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,rgba(57,211,83,.08) 55%,rgba(57,211,83,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)
+}
+.ws-window .btn--primary:hover{
+  border-color:rgba(57,211,83,.55);color:#b6f7c6;
+  background:linear-gradient(145deg,rgba(255,255,255,.06) 0%,rgba(57,211,83,.11) 55%,rgba(57,211,83,.03) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14)
+}
+
+.ws-window .btn--warn{
+  color:#f0a875;
+  border:1px solid rgba(240,136,62,.30);
+  background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,rgba(240,136,62,.07) 55%,rgba(240,136,62,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)
+}
+.ws-window .btn--warn:hover{
+  border-color:rgba(240,136,62,.55);color:#ffc499;
+  background:linear-gradient(145deg,rgba(255,255,255,.06) 0%,rgba(240,136,62,.10) 55%,rgba(240,136,62,.03) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14)
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PROJECT LIST
+   ═══════════════════════════════════════════════════════════════════════════ */
+.ws-list-wrap{flex:1;min-height:0;overflow-y:auto;padding:8px 0}
+.ws-list{display:flex;flex-direction:column}
+.ws-card{
+  position:relative;
+  display:flex;align-items:center;gap:20px;
+  padding:15px 26px;cursor:pointer;
+  border-left:3px solid transparent;
+  transition:background .15s,box-shadow .15s,border-color .15s;
+}
+.ws-card + .ws-card{border-top:1px solid rgba(140,165,180,.07)}
+.ws-card:hover{
+  background:linear-gradient(90deg, rgba(57,211,83,.07) 0%, rgba(57,211,83,.015) 60%, transparent 100%);
+  border-left-color:var(--a2);
+  box-shadow:inset 5px 0 18px rgba(57,211,83,.06);
+}
+.ws-card-info{flex:1;min-width:0}
+.ws-card-name{font-size:16px;font-weight:700;color:var(--fg0);letter-spacing:.4px;display:flex;align-items:center;gap:7px}
+.ws-rename-btn{
+  display:none;flex-shrink:0;
+  appearance:none;font:inherit;cursor:pointer;
+  width:22px;height:22px;border-radius:5px;padding:3px;
+  border:1px solid rgba(136,150,168,.22);
+  background:rgba(136,150,168,.06);
+  color:var(--fg2);
+  transition:background .14s,color .14s,border-color .14s;
+}
+.ws-rename-btn svg{display:block;width:100%;height:100%}
+.ws-rename-btn:hover{background:rgba(136,150,168,.18);color:var(--fg0);border-color:rgba(136,150,168,.4)}
+.ws-card:hover .ws-rename-btn{display:flex}
+.ws-name-input{
+  flex:1;min-width:0;
+  background:transparent;
+  border:none;border-bottom:1px solid var(--a2);
+  outline:none;
+  font:inherit;font-size:16px;font-weight:700;letter-spacing:.4px;color:var(--fg0);
+  padding:0 2px;
+}
+.ws-rename-err{font-size:11px;color:var(--a4);letter-spacing:.5px;white-space:nowrap}
+.ws-card-date{font-size:11.5px;color:var(--fg2);margin-top:4px;letter-spacing:.5px}
+.ws-card-stats{display:flex;gap:30px;flex-shrink:0}
+.ws-stat-blk{text-align:right;min-width:42px}
+.ws-stat-val{font-size:23px;font-weight:700;color:var(--fg1);line-height:1}
+.ws-stat-val.sv-admin{color:var(--a4);text-shadow:0 0 12px rgba(255,51,85,.4)}
+.ws-stat-lbl{font-size:9px;color:var(--fg2);letter-spacing:2.5px;text-transform:uppercase;margin-top:5px}
+
+.ws-card-actions{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  border-left:1px solid rgba(140,165,180,.1);padding-left:18px;
+}
+.ws-del{
+  appearance:none;font:inherit;cursor:pointer;
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--fg2);
+  border:1px solid rgba(136,150,168,.20);
+  background:linear-gradient(145deg,rgba(255,255,255,.02) 0%,rgba(136,150,168,.04) 55%,rgba(136,150,168,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  transition:all .14s;
+}
+.ws-del svg{display:block;width:15px;height:15px}
+.ws-del:hover{color:#fff;border-color:transparent;background:#ff3355;box-shadow:none}
+.ws-del--perm:hover{background:#c0001a}
+
+.ws-card--recycle{opacity:.8;border-left-color:rgba(255,51,85,.25)}
+.ws-card--recycle:hover{
+  background:linear-gradient(90deg, rgba(255,51,85,.07) 0%, rgba(255,51,85,.015) 60%, transparent 100%);
+  border-left-color:var(--a4);
+  box-shadow:inset 5px 0 18px rgba(255,51,85,.06);
+}
+
+.ws-empty-hint{
+  color:rgba(140,165,180,.35);font-size:12px;letter-spacing:2px;
+  text-align:center;padding:80px 24px;
+}
+
+.ws-card.leaving{animation:ph-rowOut .24s ease forwards}
+@keyframes ph-rowOut{to{opacity:0;transform:translateX(28px);height:0;padding-top:0;padding-bottom:0}}
+
+.ws-list-wrap::-webkit-scrollbar{width:10px}
+.ws-list-wrap::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:6px;border:3px solid transparent;background-clip:content-box}
+.ws-list-wrap::-webkit-scrollbar-thumb:hover{background:#33384a;background-clip:content-box}
+

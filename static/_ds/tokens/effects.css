@@ -1,0 +1,46 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   EFFECTS — glow, shadow, gradients & backgrounds.
+
+   The PenHub look lives almost entirely in NEON GLOW: colored text-shadows on
+   anything important (brand, active items, big lettering) and soft box-shadow
+   "auras" on hover. Real depth shadows are reserved for floating panels.
+   Backgrounds are layered radial accent gradients over near-black, plus a
+   sparse 45°/135° diagonal grid on the auth & projects shells.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Text-glow (neon) ───────────────────────────────────────────────────── */
+  --glow-cyan-sm:  0 0 10px rgba(0, 217, 255, .25);
+  --glow-cyan:     0 0 18px rgba(0, 217, 255, .5);
+  --glow-green:    0 0 10px rgba(57, 211, 83, .35);
+  --glow-red:      0 0 10px rgba(255, 51, 85, .3);
+  --glow-red-lg:   0 0 18px rgba(255, 50, 50, .65), 0 0 6px rgba(255, 40, 40, .35);
+
+  /* ── Box-glow (hover auras) ─────────────────────────────────────────────── */
+  --aura-cyan:   0 0 8px rgba(0, 217, 255, .15);
+  --aura-cyan-lg:0 0 22px rgba(0, 217, 255, .07);
+  --aura-green:  0 0 14px rgba(57, 211, 83, .12);
+  --aura-red:    0 0 8px rgba(255, 51, 85, .15);
+  --aura-focus:  0 0 0 2px rgba(0, 217, 255, .12);
+
+  /* ── Depth shadows (floating chrome) ────────────────────────────────────── */
+  --shadow-panel:  0 48px 100px rgba(0, 0, 0, .85), 0 0 70px rgba(57, 211, 83, .06);
+  --shadow-login:  0 0 80px rgba(0, 217, 255, .07), 0 0 40px rgba(0, 0, 0, .6),
+                   inset 0 1px 0 rgba(0, 217, 255, .08);
+
+  /* ── Brand gradient (cyan → green, the PenHub wordmark) ─────────────────── */
+  --gradient-brand: linear-gradient(120deg, var(--accent-cyan) 0%, var(--accent-green) 100%);
+  --gradient-brand-tri: linear-gradient(135deg, #00e5ff 15%, #39d353 60%, #00e5ff 100%);  /* @kind color */
+
+  /* ── App canvas background (layered accent radials over bg-0) ───────────── */
+  --bg-app:
+    radial-gradient(ellipse 70% 60% at 4% 96%,  rgba(0,217,255,.055) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 55% at 96% 4%,  rgba(57,211,83,.04)  0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(187,134,252,.025) 0%, transparent 60%),
+    var(--bg-0);
+
+  /* ── Diagonal "operator grid" (auth + projects shells) ──────────────────── */
+  --bg-grid:
+    repeating-linear-gradient(135deg, transparent 0, transparent 90px, rgba(57,211,83,.05) 90px, rgba(57,211,83,.05) 91px),
+    repeating-linear-gradient( 45deg, transparent 0, transparent 90px, rgba(57,211,83,.05) 90px, rgba(57,211,83,.05) 91px);
+}

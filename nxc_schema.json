@@ -1,0 +1,128 @@
+{
+  "_comment": "Maps internal field names to actual nxc SQLite column names per protocol and table. Update this file when nxc renames columns — no code changes needed. To map a renamed TABLE, add a reserved \"__table__\" key inside that table's map, e.g. \"hosts\": {\"__table__\": \"computers\", \"ip\": \"ip\", ...}. Absent __table__ = the table key itself (stock nxc). The mapped name must be a plain SQL identifier.",
+  "smb": {
+    "hosts": {
+      "id": "id", "ip": "ip", "hostname": "hostname", "domain": "domain",
+      "os": "os", "dc": "dc", "smbv1": "smbv1", "signing": "signing",
+      "spooler": "spooler", "zerologon": "zerologon", "petitpotam": "petitpotam"
+    },
+    "users": {
+      "id": "id", "domain": "domain", "username": "username",
+      "password": "password", "credtype": "credtype",
+      "pillaged_from_hostid": "pillaged_from_hostid"
+    },
+    "admin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"},
+    "loggedin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"},
+    "dpapi_secrets": {
+      "id": "id", "host": "host", "dpapi_type": "dpapi_type",
+      "windows_user": "windows_user", "username": "username",
+      "password": "password", "url": "url"
+    },
+    "shares": {
+      "id": "id", "hostid": "hostid", "userid": "userid",
+      "name": "name", "remark": "remark", "read": "read", "write": "write"
+    },
+    "conf_checks": {"id": "id", "name": "name", "description": "description"},
+    "conf_checks_results": {
+      "id": "id", "host_id": "host_id", "check_id": "check_id",
+      "secure": "secure", "reasons": "reasons"
+    }
+  },
+  "ldap": {
+    "hosts": {
+      "id": "id", "ip": "ip", "hostname": "hostname", "domain": "domain",
+      "os": "os", "signing_required": "signing_required",
+      "channel_binding": "channel_binding"
+    },
+    "users": {
+      "id": "id", "domain": "domain", "username": "username",
+      "password": "password", "credtype": "credtype",
+      "pillaged_from_hostid": "pillaged_from_hostid"
+    },
+    "admin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"},
+    "loggedin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"}
+  },
+  "mssql": {
+    "hosts": {
+      "id": "id", "ip": "ip", "hostname": "hostname", "domain": "domain",
+      "os": "os", "instances": "instances"
+    },
+    "users": {
+      "id": "id", "credtype": "credtype", "domain": "domain",
+      "username": "username", "password": "password",
+      "pillaged_from_hostid": "pillaged_from_hostid"
+    },
+    "admin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"},
+    "loggedin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"}
+  },
+  "winrm": {
+    "hosts": {
+      "id": "id", "ip": "ip", "port": "port", "hostname": "hostname",
+      "domain": "domain", "os": "os"
+    },
+    "users": {
+      "id": "id", "domain": "domain", "username": "username",
+      "password": "password", "credtype": "credtype",
+      "pillaged_from_hostid": "pillaged_from_hostid"
+    },
+    "admin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"},
+    "loggedin_relations": {"id": "id", "userid": "userid", "hostid": "hostid"}
+  },
+  "ssh": {
+    "hosts": {
+      "id": "id", "host": "host", "port": "port", "banner": "banner", "os": "os"
+    },
+    "credentials": {
+      "id": "id", "username": "username", "password": "password",
+      "credtype": "credtype"
+    },
+    "admin_relations": {"id": "id", "credid": "credid", "hostid": "hostid"},
+    "loggedin_relations": {
+      "id": "id", "credid": "credid", "hostid": "hostid", "shell": "shell"
+    },
+    "keys": {"id": "id", "credid": "credid", "data": "data"}
+  },
+  "ftp": {
+    "hosts": {
+      "id": "id", "host": "host", "port": "port", "banner": "banner"
+    },
+    "credentials": {
+      "id": "id", "username": "username", "password": "password"
+    },
+    "loggedin_relations": {"id": "id", "credid": "credid", "hostid": "hostid"},
+    "directory_listings": {"id": "id", "lir_id": "lir_id", "data": "data"}
+  },
+  "nfs": {
+    "hosts": {
+      "id": "id", "ip": "ip", "hostname": "hostname", "port": "port"
+    },
+    "credentials": {
+      "id": "id", "username": "username", "password": "password"
+    },
+    "loggedin_relations": {"id": "id", "cred_id": "cred_id", "host_id": "host_id"},
+    "shares": {"id": "id", "lir_id": "lir_id", "data": "data"}
+  },
+  "vnc": {
+    "hosts": {
+      "id": "id", "ip": "ip", "hostname": "hostname", "port": "port",
+      "server_banner": "server_banner"
+    },
+    "credentials": {
+      "id": "id", "username": "username", "password": "password", "pkey": "pkey"
+    }
+  },
+  "wmi": {
+    "hosts": {
+      "id": "id", "ip": "ip", "hostname": "hostname", "port": "port"
+    },
+    "credentials": {
+      "id": "id", "username": "username", "password": "password"
+    }
+  },
+  "rdp": {
+    "hosts": {
+      "id": "id", "ip": "ip", "port": "port", "hostname": "hostname",
+      "domain": "domain", "os": "os", "nla": "nla"
+    }
+  }
+}

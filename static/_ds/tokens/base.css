@@ -1,0 +1,31 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   BASE — minimal global defaults. The PenHub app applies these to <body>;
+   we scope the visual defaults to a .ph-surface helper so dropping the design
+   system into a card or kit reproduces the operator-console canvas without
+   forcing it onto every consumer's <body>.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* The canonical PenHub canvas: near-black, layered accent radials, mono text. */
+.ph-surface {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font: var(--text-body) / var(--leading-snug) var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The diagonal "operator grid" used on auth + projects shells. */
+.ph-surface--grid {
+  background: var(--bg-grid), var(--bg-app);
+}
+
+/* PenHub's thin neon scrollbars. */
+.ph-surface ::-webkit-scrollbar { width: 5px; height: 5px; }
+.ph-surface ::-webkit-scrollbar-track { background: var(--bg-1); }
+.ph-surface ::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 3px; }
+.ph-surface ::-webkit-scrollbar-thumb:hover { background: var(--fg-2); }
+
+/* Selection uses the primary signal. */
+.ph-surface ::selection { background: rgba(0, 217, 255, .22); color: #fff; }

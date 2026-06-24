@@ -1,0 +1,186 @@
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.table-wrap{flex:1;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead th{
+  background:var(--bg3);color:var(--fg2);font-weight:600;padding:6px 10px;
+  text-align:left;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:2;
+  white-space:nowrap
+}
+thead th.sortable{cursor:pointer;user-select:none}
+thead th.sortable:hover{color:var(--fg0);background:var(--bg4)}
+thead th.sort-asc,thead th.sort-desc{color:var(--a1)!important}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:hover{background:var(--bg2)}
+td{padding:5px 10px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+tr.row-admin{background:rgba(255,51,85,.06)}
+tr.row-admin:hover{background:rgba(255,51,85,.11)}
+tr.row-dpapi {background:rgba(187,134,252,.05)}
+tr.row-dpapi:hover{background:rgba(187,134,252,.10)}
+tr.row-custom {background:rgba(232,184,75,.05)}
+tr.row-custom:hover{background:rgba(232,184,75,.10)}
+
+.badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700}
+.badge.admin   {background:rgba(255,51,85,.18);color:var(--a4)}
+.badge.loggedin{background:rgba(57,211,83,.15);color:var(--a2)}
+.badge.hash    {background:rgba(240,136,62,.18);color:var(--a3)}
+.badge.plain   {background:rgba(97,97,97,.13);color:var(--fg2)}
+.badge.vuln    {background:rgba(255,51,85,.22);color:var(--a4)}
+.badge.safe    {background:rgba(57,211,83,.13);color:var(--a2)}
+.badge.na      {color:var(--fg2);opacity:.4}
+.badge.dup     {background:rgba(240,186,50,.18);color:#f0ba32;cursor:default}
+
+/* VULNS manage-mode: clickable tri-state cells */
+.vuln-cycle-td{cursor:pointer}
+.vuln-cycle-td:hover .badge{filter:brightness(1.25);outline:1px solid rgba(255,255,255,.18);border-radius:3px}
+
+.proto{font-weight:600}
+.proto-smb  {color:var(--a1)}.proto-ldap  {color:var(--a5)}.proto-winrm{color:var(--a6)}
+.proto-mssql{color:var(--a3)}.proto-ssh   {color:var(--a2)}.proto-rdp  {color:var(--a4)}
+.proto-vnc  {color:#f06292} .proto-ftp,.proto-nfs,.proto-wmi{color:var(--fg1)}
+.proto-custom{color:#e8b84b;font-style:italic}
+
+/* CUSTOM pill — sharp corners + amber colour to distinguish from rounded protocol pills */
+.pill.p-custom{
+  border-radius:2px;color:#e8b84b;border-color:rgba(232,184,75,.35);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(145deg,rgba(255,255,255,.02) 0%,rgba(232,184,75,.04) 55%,rgba(232,184,75,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)
+}
+.pill.p-custom:hover{
+  border-color:rgba(232,184,75,.55);
+  background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,rgba(232,184,75,.08) 55%,rgba(232,184,75,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)
+}
+.pill.p-custom.active{
+  border-color:#e8b84b;color:#e8b84b;
+  background:linear-gradient(145deg,rgba(255,255,255,.05) 0%,rgba(232,184,75,.11) 50%,rgba(232,184,75,.03) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)
+}
+
+/* ── UNIQ / HK pills ─────────────────────────────────────────────────────── */
+.pill.uniq.on{border-color:var(--a2);color:var(--a2);background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,rgba(57,211,83,.08) 55%,rgba(57,211,83,.02) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.10)}
+.pill.hk-btn{color:var(--fg2);border-color:var(--fg2)}
+.pill.hk-btn.on{border-color:var(--a1);color:var(--a1);background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,rgba(0,217,255,.08) 55%,rgba(0,217,255,.02) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.10)}
+.pill.size-pill.active{border-color:var(--a1);color:var(--a1);background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,rgba(0,217,255,.08) 55%,rgba(0,217,255,.02) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.10)}
+
+/* ── AND inline button (vulns sub-row) ───────────────────────────────────── */
+.and-btn-inline{
+  border:1px solid rgba(240,136,62,.35);color:var(--a3);
+  padding:3px 8px;border-radius:var(--radius);font:inherit;cursor:pointer;
+  font-size:11px;letter-spacing:1px;margin-left:6px;transition:all .15s;
+  background:linear-gradient(145deg,rgba(255,255,255,.02) 0%,rgba(240,136,62,.05) 55%,rgba(240,136,62,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)
+}
+.and-btn-inline:hover{
+  border-color:rgba(240,136,62,.55);
+  background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,rgba(240,136,62,.09) 55%,rgba(240,136,62,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+.and-btn-inline.active{
+  border-color:rgba(240,136,62,.65);
+  background:linear-gradient(145deg,rgba(255,255,255,.05) 0%,rgba(240,136,62,.13) 50%,rgba(240,136,62,.03) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+
+/* ── VULNS filter groups (REMOTE / COERCE / ADMIN-ONLY rows) ─────────────── */
+/* Column wrapper so each group occupies its own line inside the flex-row #subPills. */
+.vf-groups{display:flex;flex-direction:column;gap:4px;width:100%}
+.vf-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:2px 0}
+.vf-group-label{
+  color:var(--fg2);font-size:9px;font-weight:700;letter-spacing:1px;
+  min-width:74px;text-align:right;opacity:.7;text-transform:uppercase
+}
+
+/* ── Pager / footer ──────────────────────────────────────────────────────── */
+.pager{
+  display:flex;align-items:center;gap:6px;padding:5px 10px;
+  border-top:1px solid var(--border);background:var(--bg1);flex-shrink:0;font-size:11px
+}
+.pager .info{color:var(--fg2)}
+.pg-btn{
+  background:transparent;border:1px solid var(--border);color:var(--fg1);
+  padding:2px 8px;border-radius:var(--radius);cursor:pointer;font:inherit
+}
+.pg-btn:hover{border-color:var(--fg2)}
+.pg-btn:disabled{opacity:.3;cursor:default}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.empty{text-align:center;padding:60px 20px;color:var(--fg2)}
+.empty .icon{font-size:28px;margin-bottom:12px;opacity:.3}
+
+/* ── Admin credential rows ───────────────────────────────────────────────── */
+tr.row-acred{background:rgba(230,168,23,.04)}
+tr.row-acred:hover{background:rgba(230,168,23,.09)}
+/* Pending (ghost) rows — domain admin list entries not yet found via sync */
+tr.row-acred-pending > td{opacity:.38;color:var(--fg2)}
+tr.row-acred-pending:hover > td{opacity:.6}
+
+/* ── Skull button (hover-only) ───────────────────────────────────────────── */
+.skull-col{width:28px;padding:3px 5px;white-space:nowrap}
+.skull-btn{
+  background:transparent;border:1px solid transparent;color:var(--fg2);
+  width:22px;height:22px;border-radius:3px;cursor:pointer;font-size:12px;
+  padding:0;line-height:1;transition:all .15s;display:inline-flex;
+  align-items:center;justify-content:center;opacity:.12
+}
+tr:hover .skull-btn{opacity:.55;border-color:var(--border)}
+.skull-btn:hover{border-color:#e6a817!important;color:#e6a817;opacity:1!important}
+.skull-btn.marked{border-color:#e6a817;color:#e6a817;background:rgba(230,168,23,.15);opacity:1!important}
+/* Muted when local_admin_cred is set on this row — mutual exclusion */
+.skull-btn.skull-muted{opacity:.1!important;cursor:default;pointer-events:none}
+
+/* ── Local admin button ──────────────────────────────────────────────────── */
+.local-admin-btn{
+  background:transparent;border:1px solid transparent;color:var(--fg2);
+  width:22px;height:22px;border-radius:3px;cursor:pointer;font-size:12px;
+  padding:0;line-height:1;transition:all .15s;display:inline-flex;
+  align-items:center;justify-content:center;opacity:.12
+}
+tr:hover .local-admin-btn{opacity:.55;border-color:var(--border)}
+.local-admin-btn:hover{border-color:#4ea6dc!important;color:#4ea6dc;opacity:1!important}
+.local-admin-btn.marked{border-color:#4ea6dc;color:#4ea6dc;background:rgba(78,166,220,.15);opacity:1!important}
+/* Muted when admin_cred is set on this row — mutual exclusion */
+.local-admin-btn.lap-muted{opacity:.1!important;cursor:default;pointer-events:none}
+.del-custom-btn{
+  background:transparent;border:1px solid transparent;color:#e05555;
+  width:22px;height:22px;border-radius:3px;cursor:pointer;font-size:13px;
+  padding:0;line-height:1;transition:all .15s;display:inline-flex;
+  align-items:center;justify-content:center;opacity:.25
+}
+tr:hover .del-custom-btn{opacity:.7;border-color:rgba(224,85,85,.4)}
+.del-custom-btn:hover{border-color:#e05555!important;background:rgba(224,85,85,.13);opacity:1!important}
+
+/* ── Copy buttons ────────────────────────────────────────────────────────── */
+.act-col{width:48px;padding:3px 5px;white-space:nowrap}
+.copy-btn{
+  background:transparent;border:1px solid var(--border);color:var(--fg2);
+  width:20px;height:20px;border-radius:3px;cursor:pointer;font-size:11px;
+  padding:0;line-height:1;transition:all .15s;display:inline-flex;
+  align-items:center;justify-content:center;vertical-align:middle
+}
+.copy-btn:hover{border-color:var(--a1);color:var(--a1)}
+.copy-btn.flash{color:var(--a2)!important;border-color:var(--a2)!important}
+/* Manage-mode button flash: red=hide, cyan=restore (distinct from copy's green) */
+.copy-btn.flash-hide{color:var(--a4)!important;border-color:var(--a4)!important;background:rgba(255,51,85,.18)!important}
+.copy-btn.flash-restore{color:var(--a1)!important;border-color:var(--a1)!important;background:rgba(0,217,255,.12)!important}
+/* Row flash animations for strike/restore */
+@keyframes kf-row-strike{0%,100%{background:transparent}35%{background:rgba(200,30,30,.18);box-shadow:inset 0 0 0 1px rgba(255,50,50,.4)}}
+@keyframes kf-row-restore{0%,100%{background:transparent}35%{background:rgba(30,180,60,.15);box-shadow:inset 0 0 0 1px rgba(50,210,80,.38)}}
+tr.row-strike-flash{animation:kf-row-strike .32s ease-out}
+tr.row-restore-flash{animation:kf-row-restore .32s ease-out}
+
+/* ── Copyable cells ──────────────────────────────────────────────────────── */
+.copyable{cursor:pointer;user-select:none}
+.copyable:hover{color:var(--a1)!important}
+
+/* ── Copy toast ──────────────────────────────────────────────────────────── */
+#copyToast{
+  position:fixed;bottom:48px;left:50%;
+  transform:translateX(-50%) translateY(6px);
+  background:rgba(57,211,83,.12);border:1px solid var(--a2);
+  color:var(--a2);padding:5px 20px;border-radius:20px;
+  font-size:11px;letter-spacing:3px;pointer-events:none;
+  opacity:0;transition:opacity .15s,transform .15s;z-index:999
+}
+#copyToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+

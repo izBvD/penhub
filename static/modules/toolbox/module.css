@@ -1,0 +1,145 @@
+/* ── Toolbox module (lazy-loaded) ────────────────────────────────────────── */
+.tb-content{
+  flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;
+  gap:12px;width:100%;align-items:center;
+  background:
+    repeating-linear-gradient(135deg,transparent 0,transparent 90px,rgba(240,136,62,.018) 90px,rgba(240,136,62,.018) 91px),
+    repeating-linear-gradient( 45deg,transparent 0,transparent 90px,rgba(240,136,62,.018) 90px,rgba(240,136,62,.018) 91px),
+    radial-gradient(ellipse 55% 45% at 85% 12%, rgba(240,136,62,.055) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 40% at 10% 88%, rgba(57,211,83,.040)  0%,transparent 55%);
+}
+
+/* ── Shared card base (.card, .card-title) is declared in shell.css ─────── */
+
+/* ── Download buttons ─────────────────────────────────────────────────────── */
+.btn.tb-dl-btn{
+  color:var(--a6);white-space:nowrap;
+  border:1px solid rgba(38,198,218,.30);
+  background:linear-gradient(145deg,rgba(255,255,255,.03) 0%,rgba(38,198,218,.06) 55%,rgba(38,198,218,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)
+}
+.btn.tb-dl-btn:hover{
+  border-color:rgba(38,198,218,.55);
+  background:linear-gradient(145deg,rgba(255,255,255,.05) 0%,rgba(38,198,218,.09) 55%,rgba(38,198,218,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+
+/* ── Spray archive section ────────────────────────────────────────────────── */
+.tb-spray-section{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.18)}
+.tb-spray-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--fg1);
+  text-transform:uppercase;margin-bottom:8px}
+/* Subsection label (e.g. Domain Admin Watchlist) — brighter than tb-env-label */
+.tb-section-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--fg0);
+  text-transform:uppercase;margin-bottom:8px;opacity:.9}
+.btn.tb-spray-btn{
+  color:var(--a5);padding:5px 14px;font-weight:700;
+  border:1px solid rgba(187,134,252,.30);
+  background:linear-gradient(145deg,rgba(255,255,255,.03) 0%,rgba(187,134,252,.06) 55%,rgba(187,134,252,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)
+}
+.btn.tb-spray-btn:hover{
+  border-color:rgba(187,134,252,.55);
+  background:linear-gradient(145deg,rgba(255,255,255,.05) 0%,rgba(187,134,252,.09) 55%,rgba(187,134,252,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+
+/* ── Hints ────────────────────────────────────────────────────────────────── */
+.tb-hint{font-size:10px;color:var(--fg2);letter-spacing:.3px;line-height:1.6}
+.tb-hint code{color:var(--fg1);font-size:10px;background:var(--bg3);
+  border-radius:3px;padding:1px 4px;border:1px solid var(--border)}
+
+/* ── Operator environment groups ──────────────────────────────────────────── */
+.tb-env-group{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18)}
+.tb-env-group:first-child{margin-top:0;padding-top:0;border-top:none}
+.tb-env-label{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--fg1);
+  text-transform:uppercase;margin-bottom:8px}
+
+/* ── Input row ────────────────────────────────────────────────────────────── */
+.tb-input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tb-input{background:var(--bg3);border:1px solid var(--border);color:var(--fg0);
+  padding:4px 10px;border-radius:var(--radius);font:inherit;outline:none;
+  flex:1;min-width:160px;transition:border-color .15s;font-size:11px}
+.tb-input:focus{border-color:var(--a1)}
+.tb-input-sm{flex:none;width:70px;min-width:0}
+.tb-input.tb-input-fixed{flex:none;width:260px}
+.tb-select{background:var(--bg3);border:1px solid var(--border);color:var(--fg1);
+  padding:4px 6px;border-radius:var(--radius);font:inherit;outline:none;font-size:11px;
+  cursor:pointer;transition:border-color .15s}
+.tb-select:focus{border-color:var(--a1)}
+
+/* ── BH config grid ───────────────────────────────────────────────────────── */
+.tb-bh-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;
+  margin-bottom:4px}
+.tb-bh-grid .tb-input,
+.tb-bh-grid .tb-input-sm,
+.tb-bh-grid .tb-select{width:300px;max-width:100%;min-width:0;box-sizing:border-box}
+.tb-field-label{font-size:10px;color:var(--fg2);letter-spacing:.5px;white-space:nowrap}
+
+/* ── Copy button ──────────────────────────────────────────────────────────── */
+.btn.tb-copy-btn{
+  color:var(--a2);white-space:nowrap;
+  border:1px solid rgba(57,211,83,.30);
+  background:linear-gradient(145deg,rgba(255,255,255,.03) 0%,rgba(57,211,83,.06) 55%,rgba(57,211,83,.01) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)
+}
+.btn.tb-copy-btn:hover{
+  border-color:rgba(57,211,83,.55);
+  background:linear-gradient(145deg,rgba(255,255,255,.05) 0%,rgba(57,211,83,.09) 55%,rgba(57,211,83,.02) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+
+/* ── Result messages (mirrors hashkiller pattern) ────────────────────────── */
+.result-msg{margin-top:6px;font-size:11px;min-height:16px;letter-spacing:.5px}
+.result-msg.ok  {color:var(--a2)}
+.result-msg.err {color:var(--a4)}
+.result-msg.info{color:var(--fg1)}
+.result-msg.warn{color:#e6a817}
+
+/* ── Error toast ──────────────────────────────────────────────────────────── */
+#tbErrToast{
+  position:fixed;bottom:48px;left:50%;
+  transform:translateX(-50%) translateY(6px);
+  background:rgba(255,51,85,.12);border:1px solid var(--a4);
+  color:var(--a4);padding:5px 20px;border-radius:20px;
+  font-size:11px;letter-spacing:3px;pointer-events:none;
+  opacity:0;transition:opacity .15s,transform .15s;z-index:999
+}
+#tbErrToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Block section headers ────────────────────────────────────────────────── */
+/* Full-bleed headers that span the card width (mirrors card padding 14px/16px) */
+.tb-block-hdr{
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  margin:-14px -16px 14px;padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  border-left:3px solid transparent;
+  border-radius:4px 4px 0 0;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)
+}
+.tb-block-hdr.hdr-dim   {color:var(--fg2);background:linear-gradient(160deg,rgba(255,255,255,.03) 0%,rgba(136,150,168,.06) 55%,rgba(136,150,168,.01) 100%)}
+.tb-block-hdr.hdr-green {color:var(--a2);border-left-color:var(--a2);background:linear-gradient(160deg,rgba(255,255,255,.05) 0%,rgba(57,211,83,.10) 55%,rgba(57,211,83,.02) 100%)}
+.tb-block-hdr.hdr-cyan  {color:var(--a6);border-left-color:var(--a6);background:linear-gradient(160deg,rgba(255,255,255,.05) 0%,rgba(38,198,218,.10) 55%,rgba(38,198,218,.02) 100%)}
+.tb-block-hdr.hdr-orange{color:var(--a3);border-left-color:var(--a3);background:linear-gradient(160deg,rgba(255,255,255,.05) 0%,rgba(240,136,62,.10) 55%,rgba(240,136,62,.02) 100%)}
+
+/* ── OR divider — width matches tb-input-fixed so it sits between the inputs */
+.tb-or-sep{
+  width:260px;display:flex;align-items:center;gap:8px;margin:7px 0;
+  color:var(--fg0);font-size:10px;letter-spacing:2px
+}
+.tb-or-sep::before,.tb-or-sep::after{
+  content:'';flex:1;height:1px;background:rgba(255,255,255,.2)
+}
+
+/* ── How-to collapsible (self-contained, no dependency on hashkiller CSS) ──── */
+.how-to-toggle{cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px}
+.how-to-toggle:hover{color:var(--fg0)}
+.how-to-arrow{transition:transform .2s;display:inline-block;font-style:normal;color:var(--fg2)}
+.how-to-body{margin-top:10px}
+.how-to pre{color:var(--fg1);font:inherit;line-height:1.8;font-size:11px;
+  background:var(--bg3);border-radius:var(--radius);padding:10px 12px;
+  white-space:pre-wrap;word-break:break-word}
+
+/* ── Sidebar item color ───────────────────────────────────────────────────── */
+.sb-item.sb-tb.active,
+.sb-item.sb-tb:hover{color:var(--a3)}
