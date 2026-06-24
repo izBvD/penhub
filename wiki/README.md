@@ -6,6 +6,6 @@ This folder is the PenHub documentation, in two languages.
 
 ## Start here / Начало
 
-- **English:** [en/Home.md](en/Home.md)
+- **English:** [en/Home.md](wiki/en/Wiki - table of contents.md)
 - **Русский:** [rus/Home.md](Wiki%20-%20оглавление.md)
 
