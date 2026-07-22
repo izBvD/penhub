@@ -106,6 +106,7 @@ On demand, the script automatically pulls and mutates every login in the project
 | `-sa SEP`  | Cut the last `SEP` (separator) on the right and everything after it |
 | `-b N`     | Cut exactly N characters from the left           |
 | `-a N`     | Cut exactly N characters from the right          |
+| `--offline-file PATH` | Take logins from a local file (one per line), **without hitting the API**. No config/server needed; same mutations. Output filenames come from `-ws` or the input file name. |
 
 Produces two files:
 - **`<ws>_base.txt`** — unique plaintext passwords (incl. bruteforced) + logins + domains (lowercased) + DPAPI logins/passwords.

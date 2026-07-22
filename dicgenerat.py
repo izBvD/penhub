@@ -267,6 +267,13 @@ def fetch_all(server: str, token: str, path: str, params: dict) -> list:
     return all_rows
 
 
+def read_offline_logins(path: str) -> list:
+    """Логины из локального файла (по одному на строку) — для режима --offline-file.
+    Пустые/пробельные строки пропускаются, пробелы по краям срезаются. API не трогается."""
+    with open(path, encoding="utf-8", errors="replace") as f:
+        return [line.strip() for line in f if line.strip()]
+
+
 def collect_logins(creds: list, custom: list, dpapi: list) -> list:
     out: set = set()
     for row in list(creds) + list(custom) + list(dpapi):
@@ -286,21 +293,30 @@ def _parse_args(argv=None):
     ap.add_argument("-sa", default=None, help="Срезать последний SEP и всё после него")
     ap.add_argument("-b", type=int, default=0, help="Срезать ровно N символов спереди")
     ap.add_argument("-a", type=int, default=0, help="Срезать ровно N символов сзади")
+    ap.add_argument("--offline-file", default=None,
+                    help="Взять логины из локального файла (по одному на строку), без обращения к API")
     return ap.parse_args(argv)
 
 
 def main(argv=None) -> int:
     args = _parse_args(argv)
-    config = load_config(CONF_FILE)
-    ws_name = args.workspace or config["workspace"]
-    token = _token(config["password"])
-    server = config["server"]
 
-    ws_id = resolve_workspace(server, token, ws_name)
-    creds = fetch_all(server, token, "/api/credentials",
-                      {"workspace_id": ws_id, "hide_guest": "false"})
-    custom = fetch_all(server, token, "/api/custom_creds", {"workspace_id": ws_id})
-    dpapi = fetch_all(server, token, "/api/dpapi", {"workspace_id": ws_id})
+    if args.offline_file:
+        # Offline: логины из файла, к API не обращаемся (конфиг/сервер не нужны).
+        logins = read_offline_logins(args.offline_file)
+        ws_name = args.workspace or Path(args.offline_file).stem
+        creds = [{"username": u} for u in logins]
+        custom, dpapi = [], []
+    else:
+        config = load_config(CONF_FILE)
+        ws_name = args.workspace or config["workspace"]
+        token = _token(config["password"])
+        server = config["server"]
+        ws_id = resolve_workspace(server, token, ws_name)
+        creds = fetch_all(server, token, "/api/credentials",
+                          {"workspace_id": ws_id, "hide_guest": "false"})
+        custom = fetch_all(server, token, "/api/custom_creds", {"workspace_id": ws_id})
+        dpapi = fetch_all(server, token, "/api/dpapi", {"workspace_id": ws_id})
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
