@@ -85,6 +85,21 @@ Results appear in **⚡ VULNS** after the next sync.
 
 ---
 
+## 🔄 Updating
+
+Updating is just a re-download + overwrite:
+
+1. **Server** — download the latest version and drop it into your PenHub folder, overwriting the existing files. Your data is untouched (`collector.db` / `hashkiller.db` are runtime files and aren't part of the download). Then restart the server (re-run `pip install -r requirements.txt` in case dependencies changed).
+2. **Operators** — grab the fresh scripts from **Toolbox → Operator Environment Config → ↓ DOWNLOAD SCRIPTS**, then on the operator's machine:
+
+```bash
+./nxc_collector --install
+```
+
+`--install` overwrites the operator scripts and NXC modules in place and keeps your config.
+
+---
+
 ## Documentation
 
 | | 🇬🇧 English | 🇷🇺 Русский |
