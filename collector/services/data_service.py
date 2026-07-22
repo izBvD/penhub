@@ -6,7 +6,10 @@ These are pure functions with no side effects.
 
 def dedup_results(rows: list) -> list:
     """
-    Per-(domain, user, password): keep the row with highest priority (TZ key).
+    Per-(domain, user, password, host ip): keep the row with highest priority (TZ key).
+    Host-aware so auth-relation views keep one row per credential x host; duplicates
+    from different protocols / operators on the SAME host collapse (proto & operator
+    are not part of the key). Rows without a host (ip empty) dedup by the triple.
     Priority: plaintext+admin > plaintext > hash+admin > hash; SMB preferred; more fields.
     admin_cred=1 is propagated from any duplicate to the winner.
     Mirrors frontend deduplicateRows().
@@ -28,6 +31,7 @@ def dedup_results(rows: list) -> list:
             f"{(r.get('cred_domain') or '').lower()}"
             f"|{(r.get('username') or '').lower()}"
             f"|{r.get('password') or ''}"
+            f"|{r.get('ip') or ''}"
         )
         if r.get("admin_cred") == 1:
             acred_keys.add(k)

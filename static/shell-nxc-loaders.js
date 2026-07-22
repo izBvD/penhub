@@ -1,4 +1,26 @@
 // ── Data loading ───────────────────────────────────────────────────────────
+
+// Fetch-all limit: server-paginated loaders request the WHOLE result set so the client
+// can sort across all rows, then paginate locally. Per-workspace data is bounded (unlike
+// the global HashKiller DB), so this is cheap — mirrors what loadAll has always done.
+const _ALL_LIMIT = 999999;
+
+// Sort the full result set, then return the current page slice. Sets the global `total`
+// to the full count so the pager is correct. GUARD: every server-fetched loader must route
+// its rows through this (or _paginate) so sorting spans all pages, not just the current one.
+function _sortPaginate(rows) {
+  const sorted = _sortRows(rows);
+  total = sorted.length;
+  return pageSize > 0 ? sorted.slice((page - 1) * pageSize, page * pageSize) : sorted;
+}
+
+// Paginate a pre-arranged list WITHOUT re-sorting (e.g. ACRED: sorted real rows followed by
+// trailing ghost rows that must stay last). Sets the global `total`.
+function _paginate(rows) {
+  total = rows.length;
+  return pageSize > 0 ? rows.slice((page - 1) * pageSize, page * pageSize) : rows;
+}
+
 async function loadData() {
   if (!ws) return;
   if (globalSearchMode) return loadGlobalSearch();
@@ -98,12 +120,7 @@ async function loadAll() {
     ...samLsaNorm,
     ...customNorm,
   ];
-  const merged = _sortRows(uniqMode ? deduplicateRows(raw) : raw);
-  total = merged.length;
-  const pageRows = pageSize > 0
-    ? merged.slice((page - 1) * pageSize, page * pageSize)
-    : merged;
-  renderAll(pageRows);
+  renderAll(_sortPaginate(uniqMode ? deduplicateRows(raw) : raw));
   renderPager();
 }
 
@@ -193,26 +210,23 @@ async function _deleteCustomCred(id) {
 }
 
 async function loadCustomCreds() {
-  const lim = pageSize || 999999;
-  const p = new URLSearchParams({workspace_id: ws.id, page, limit: lim});
+  const p = new URLSearchParams({workspace_id: ws.id, page: 1, limit: _ALL_LIMIT});
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/custom_creds?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total;
-  _renderCustomCreds(_sortRows(d.rows));
+  _renderCustomCreds(_sortPaginate(d.rows));
   renderPager();
 }
 
 async function loadGlobalSearch() {
   if (!globalSearchQ || globalSearchQ.length < 2) { empty('Enter at least 2 characters to search'); return; }
-  const lim = pageSize === 0 ? 0 : (pageSize || 100);
-  const p = new URLSearchParams({workspace_id:ws.id, q:globalSearchQ, page, limit:lim, hide_guest:hideGuest});
+  // limit=0 → server returns all (deduped, capped per table); client sorts + paginates.
+  const p = new URLSearchParams({workspace_id:ws.id, q:globalSearchQ, page:1, limit:0, hide_guest:hideGuest});
   const r = await apiFetch('/api/search?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total;
-  renderGlobalSearch(_sortRows(d.rows));
+  renderGlobalSearch(_sortPaginate(d.rows));
   renderPager();
 }
 
@@ -273,30 +287,18 @@ async function loadResults() {
   }
   if (srch) p.set('search', srch);
 
-  if (uniqMode) {
-    // Server-side dedup: all matching rows are deduplicated, then paginated.
-    p.set('dedup', 'true');
-    p.set('page', page);
-    p.set('limit', pageSize || 100);
-    const r = await apiFetch('/api/results?' + p);
-    if (!r.ok) return;
-    const d = await r.json();
-    total = d.total;
-    renderResults(_sortRows(d.rows)); renderPager();
-  } else {
-    p.set('page', page);
-    p.set('limit', pageSize || 999999);
-    const r = await apiFetch('/api/results?' + p);
-    if (!r.ok) return;
-    const d = await r.json();
-    total = d.total;
-    renderResults(_sortRows(d.rows)); renderPager();
-  }
+  // Fetch the whole set (server dedups first when uniqMode), then sort + paginate on the client.
+  if (uniqMode) p.set('dedup', 'true');
+  p.set('page', 1);
+  p.set('limit', _ALL_LIMIT);
+  const r = await apiFetch('/api/results?' + p);
+  if (!r.ok) return;
+  const d = await r.json();
+  renderResults(_sortPaginate(d.rows)); renderPager();
 }
 
 async function loadSamLsa() {
-  const lim = pageSize || 999999;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim, hide_guest:hideGuest});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hide_guest:hideGuest});
   p.set('proto', proto !== 'ALL' ? proto : 'SMB');
   // pillaged_from_ip IS NOT NULL  OR  not linked to any auth_relation
   p.set('samlsa', 'true');
@@ -304,87 +306,80 @@ async function loadSamLsa() {
   const r = await apiFetch('/api/credentials?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total; renderCreds(_sortRows(d.rows)); renderPager();
+  renderCreds(_sortPaginate(d.rows)); renderPager();
 }
 
 async function loadProtoCreds() {
-  const lim = pageSize || 999999;
   // VNC/WMI need host IP — fetch from auth_relations
   if (proto === 'VNC' || proto === 'WMI') {
-    const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim, hide_guest:hideGuest, proto});
+    const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hide_guest:hideGuest, proto});
     if (srch) p.set('search', srch);
     const r = await apiFetch('/api/results?' + p);
     if (!r.ok) return;
     const d = await r.json();
-    total = d.total; renderCreds(_sortRows(d.rows)); renderPager();
+    renderCreds(_sortPaginate(d.rows)); renderPager();
     return;
   }
   // LDAP CREDS uses credentials table (no host IP needed)
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim, hide_guest:hideGuest});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hide_guest:hideGuest});
   if (proto !== 'ALL') p.set('proto', proto);
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/credentials?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total; renderCreds(_sortRows(d.rows)); renderPager();
+  renderCreds(_sortPaginate(d.rows)); renderPager();
 }
 
 async function loadProtoHosts() {
   // For protocols with "hosts" sub (RDP, LDAP HOSTS)
-  const lim = pageSize || 2000;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT});
   if (proto) p.set('proto', proto);
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/hosts?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total;
-  if (proto === 'RDP') renderRdpHosts(d.rows);
-  else if (proto === 'LDAP') renderLdapHosts(d.rows);
-  else renderProtoHosts(d.rows);
+  const rows = _sortPaginate(d.rows);
+  if (proto === 'RDP') renderRdpHosts(rows);
+  else if (proto === 'LDAP') renderLdapHosts(rows);
+  else renderProtoHosts(rows);
   renderPager();
 }
 
 async function loadShares() {
-  const lim = pageSize || 999999;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT});
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/shares?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total;
-  if (proto === 'NFS') renderNfsShares(_sortRows(d.rows));
-  else renderSmbShares(_sortRows(d.rows));
+  const rows = _sortPaginate(d.rows);
+  if (proto === 'NFS') renderNfsShares(rows);
+  else renderSmbShares(rows);
   renderPager();
 }
 
 async function loadDirectoryListings(protoFilter) {
-  const lim = pageSize || 999999;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim, proto:protoFilter});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, proto:protoFilter});
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/directory_listings?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total; renderDirectoryListings(d.rows, protoFilter); renderPager();
+  renderDirectoryListings(_sortPaginate(d.rows), protoFilter); renderPager();
 }
 
 async function loadConfChecks() {
-  const lim = pageSize || 999999;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT});
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/conf_checks?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total; renderConfChecks(d.rows); renderPager();
+  renderConfChecks(_sortPaginate(d.rows)); renderPager();
 }
 
 async function loadAcredCreds() {
-  const lim = pageSize || 999999;
-
   if (acredSub === 'local') {
     // LOCAL ADMIN tab: use results endpoint (has ip + cred_domain per host).
     // proto forced to SMB — local admin only applies to SMB admin relations.
-    const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim, hide_guest:hideGuest});
+    const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hide_guest:hideGuest});
     p.set('local_admin_cred', 'true');
     p.set('relation', 'admin');
     p.set('proto', 'SMB');
@@ -392,15 +387,14 @@ async function loadAcredCreds() {
     const r = await apiFetch('/api/results?' + p);
     if (!r.ok) return;
     const d = await r.json();
-    total = d.total;
-    renderCreds(_sortRows(d.rows));
+    renderCreds(_sortPaginate(d.rows));
     renderPager();
     return;
   }
 
   // CREDS tab: domain admin credentials (admin_cred=1) + pending ghost rows
   // Domain admin creds are protocol-agnostic — proto filter must not apply here.
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim, hide_guest:hideGuest});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hide_guest:hideGuest});
   p.set('admin_cred', 'true');
   if (srch) p.set('search', srch);
   const [r, rp] = await Promise.all([
@@ -415,17 +409,16 @@ async function loadAcredCreds() {
     ...pr, _pending: true, proto: '', password: '', credtype: '',
     admin_cred: 1, brutforced: null, pkey: null, operator: null,
   }));
-  total = d.total + pendingRows.length;
-  renderCreds([..._sortRows(d.rows), ...pendingRows]);
+  // Sort real creds across all pages, keep ghosts trailing, then paginate the combined list.
+  renderCreds(_paginate([..._sortRows(d.rows), ...pendingRows]));
   renderPager();
 }
 
 // ── Manage-mod: hidden credentials + DPAPI view ────────────────────────────
 async function loadHidden() {
-  const lim = pageSize || 999999;
-  const pc = new URLSearchParams({workspace_id:ws.id, page:1, limit:lim, hide_guest:'false', hidden:'true'});
+  const pc = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hide_guest:'false', hidden:'true'});
   if (srch) pc.set('search', srch);
-  const pd = new URLSearchParams({workspace_id:ws.id, page:1, limit:lim, hidden:'true'});
+  const pd = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hidden:'true'});
   if (srch) pd.set('search', srch);
   const [rc, rd] = await Promise.all([
     apiFetch('/api/credentials?' + pc).then(r => r.ok ? r.json() : {rows:[],total:0}),
@@ -434,19 +427,16 @@ async function loadHidden() {
   const credRows  = rc.rows.map(r => ({...r, _src:'cred'}));
   const dpapiRows = rd.rows.map(d => ({...d, _src:'dpapi', proto:'DPAPI',
     username:d.username||'', password:d.password||'', domain:'', credtype:'plaintext', brutforced:null}));
-  const merged = _sortRows([...credRows, ...dpapiRows]);
-  total = merged.length;
-  renderHiddenItems(merged);
+  renderHiddenItems(_sortPaginate([...credRows, ...dpapiRows]));
   renderPager();
 }
 
 async function loadHiddenHosts() {
-  const lim = pageSize || 999999;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim, hidden:'true'});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT, hidden:'true'});
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/hosts?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total; renderHiddenHosts(_sortRows(d.rows)); renderPager();
+  renderHiddenHosts(_sortPaginate(d.rows)); renderPager();
 }
 

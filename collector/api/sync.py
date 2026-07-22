@@ -25,6 +25,22 @@ def sync_workspace(body: SyncPayload, background_tasks: BackgroundTasks):
     with db_cursor() as cur:
         wid = get_or_create_workspace(cur, body.workspace)
 
+        # Timeline: capture the first accepted sync (even an empty one) as a one-time,
+        # immutable snapshot. GUARD: workspace_config timeline_first_sync* keys are
+        # written ONLY here; the timeline user API never mutates them.
+        if not cur.execute(
+            "SELECT 1 FROM workspace_config WHERE workspace_id=? AND key='timeline_first_sync'",
+            (wid,),
+        ).fetchone():
+            cur.execute(
+                "INSERT INTO workspace_config(workspace_id,key,value) VALUES(?,?,?)",
+                (wid, "timeline_first_sync", now),
+            )
+            cur.execute(
+                "INSERT OR REPLACE INTO workspace_config(workspace_id,key,value) VALUES(?,?,?)",
+                (wid, "timeline_first_sync_op", operator or ""),
+            )
+
         # Snapshot max credential id before this sync so post-sync honeypot enrichment
         # only auto-hides credentials that are genuinely NEW in this sync.
         # Existing credentials (including individually restored ones) are never touched.

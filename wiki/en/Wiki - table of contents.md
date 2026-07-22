@@ -9,12 +9,14 @@ PenHub — a data aggregation platform for pentest results collected with [NetEx
 
 **Installation**
 - [Installation — Server](install/Installation-Server.md)
+- [Installation — Windows Offline](install/Installation-Windows-Offline.md)
 - [Installation — Operator Client](install/Installation-Operator-Client.md)
 
 **Modules and Features**
 - [Module — NXC Collector](modules/Module-NXC-Collector.md)
 - [Module — HashKiller](modules/Module-HashKiller.md)
 - [Module — Toolbox](modules/Module-Toolbox.md)
+- [Module — Reports](modules/Module-Reports.md)
 - [Notifications](usage/Notifications.md)
 - [Exports](usage/Exports.md)
 

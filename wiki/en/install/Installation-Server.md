@@ -19,7 +19,7 @@ The PenHub server is a simple Python process. Deploy it on a machine accessible 
 
 ```bash
 # 1. clone the project
-git clone https://github.com/YOURNAME/penhub.git
+git clone https://github.com/izBvD/penhub.git
 cd penhub
 
 # 2. (recommended) virtual environment
@@ -27,13 +27,15 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # 3. dependencies
-pip install fastapi uvicorn openpyxl
+pip install -r requirements.txt
 
 # 4. start
 python3 server.py --host 0.0.0.0 --port 322 --password "ChooseAStrongPassword"
 ```
 
 That's it. On first start the server creates `collector.db`, `hashkiller.db`, and the `hk_inbox/` directory, then starts listening.
+
+> **Windows without internet?** Install Python and the dependencies from the bundled `offline_windows_installer/` folder — see **[Installation — Windows Offline](Installation-Windows-Offline.md)**.
 
 ![](../../images/server-startup-terminal.png)
 

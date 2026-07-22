@@ -264,6 +264,10 @@ async function renderProjectList() {
       filtered = list.filter(w => !!w.archived_at && !w.recycled_at);
     }
 
+    // Newest first by creation date (ISO8601 strings sort chronologically;
+    // missing created_at sinks to the bottom). Applies to every tab.
+    filtered.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
     const emptyHints = {
       active:  'No active projects — create one with + NEW',
       archive: 'No archived projects',
@@ -402,6 +406,7 @@ async function openProject(id) {
   // Also add a container div in collector/_frontend/_html.py. See penhub/app.py for the full checklist.
   if (Shell.isActive('toolbox'))    TBModule.onActivate(ws);
   if (Shell.isActive('hashkiller')) HKModule.onActivate(ws);
+  if (Shell.isActive('reports'))    RPModule.onActivate(ws);
 }
 
 async function createProjectFromPage() {
@@ -482,6 +487,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           // Activate requested module after project is open
           if      (modParam === 'hashkiller') { await Shell.activate('hashkiller'); }
           else if (modParam === 'toolbox')    { await Shell.activate('toolbox'); }
+          else if (modParam === 'reports')    { await Shell.activate('reports'); }
           return;
         }
       }
@@ -490,5 +496,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     // If ?module= was passed without ?ws=, activate after login+project selection
     if      (modParam === 'hashkiller' && ws) { await Shell.activate('hashkiller'); }
     else if (modParam === 'toolbox'    && ws) { await Shell.activate('toolbox'); }
+    else if (modParam === 'reports'    && ws) { await Shell.activate('reports'); }
   } catch(e) { /* not logged in */ }
 });

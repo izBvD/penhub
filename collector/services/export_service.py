@@ -87,6 +87,64 @@ def xlsx_buf(headers: list, rows: list, sheet_name: str = "Data") -> BytesIO:
     return buf
 
 
+def local_admins_xlsx(admins: list, reused: list, headers: list) -> BytesIO:
+    """Two-section single-sheet XLSX: LOCAL ADMINS, then REUSED LOCAL CREDENTIALS below.
+
+    Both sections share the same columns. Each data row may carry a trailing
+    '__hash__'/None tag for fill color (stripped before writing).
+    """
+    import openpyxl
+    from openpyxl.styles import Font, PatternFill, Alignment
+    from openpyxl.utils import get_column_letter
+
+    HEADER_FILL = PatternFill("solid", fgColor="2F75B6")
+    HEADER_FONT = Font(bold=True, color="FFFFFF")
+    TITLE_FONT  = Font(bold=True, size=12, color="2F75B6")
+    HASH_FILL   = PatternFill("solid", fgColor="FFF2CC")
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Local Admins"
+
+    def _section(title, rows):
+        ws.append([title])
+        ws.cell(row=ws.max_row, column=1).font = TITLE_FONT
+        ws.append(headers)
+        for cell in ws[ws.max_row]:
+            cell.fill = HEADER_FILL
+            cell.font = HEADER_FONT
+            cell.alignment = Alignment(horizontal="center")
+        if not rows:
+            ws.append(["— none —"])
+            return
+        for row in rows:
+            has_tag = bool(row) and (row[-1] is None or
+                                     (isinstance(row[-1], str) and row[-1].startswith("__")))
+            tag = row[-1] if has_tag else ""
+            data = row[:-1] if has_tag else row
+            ws.append([sanitize_cell(v) for v in data])
+            lr = ws.max_row
+            for cell in ws[lr]:
+                if cell.data_type == 'f':
+                    cell.data_type = 's'
+            if tag == "__hash__":
+                for cell in ws[lr]:
+                    cell.fill = HASH_FILL
+
+    _section("LOCAL ADMINS", admins)
+    ws.append([])
+    _section("REUSED LOCAL CREDENTIALS", reused)
+
+    for col in ws.columns:
+        max_len = max((len(str(c.value or "")) for c in col), default=0)
+        ws.column_dimensions[get_column_letter(col[0].column)].width = min(max_len + 2, 60)
+
+    buf = BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    return buf
+
+
 def allcred_xlsx(plain_rows: list, hash_rows: list, dpapi_rows: list,
                  custom_rows: list | None = None,
                  local_admin_rows: list | None = None) -> BytesIO:

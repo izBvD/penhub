@@ -117,7 +117,6 @@ HTML_LAYOUT = r"""<body>
     <button class="pill guest on" id="guestBtn" onclick="toggleGuest()"
             title="Hide guest / гость / DefaultAccount / WDAGUtilityAccount entries">&#128683; GUEST</button>
     <button class="btn xlsx"    onclick="exportXlsx()"   title="Export current view as XLSX">XLSX&#8595;</button>
-    <button class="btn allcred" onclick="exportAllCred()" title="Export all workspace credentials">ALL CREDS&#8595;</button>
   </div>
 
   <!-- Row 3: manage-mod hidden items (visible only when manage mode is active) -->
@@ -162,6 +161,9 @@ HTML_LAYOUT = r"""<body>
 
   <!-- Toolbox module view (lazy-loaded on first activation) -->
   <div id="mod-toolbox" style="display:none;flex:1;overflow:hidden"></div>
+
+  <!-- Reports module view (lazy-loaded on first activation) -->
+  <div id="mod-reports" style="display:none;flex:1;overflow:hidden"></div>
 
   <!-- REMINDER: add <div id="mod-<moduleId>"> here for each new lazy module. -->
 

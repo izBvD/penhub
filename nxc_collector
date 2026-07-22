@@ -95,6 +95,7 @@ do_install() {
     local updater="$SCRIPT_DIR/nxc_updater.py"
     local self="$SCRIPT_DIR/nxc_collector"
     local nxce_src="$SCRIPT_DIR/nxce.py"
+    local dicgen_src="$SCRIPT_DIR/dicgenerat.py"
 
     [[ -f "$updater" ]] || _die "nxc_updater.py not found in $SCRIPT_DIR"
 
@@ -134,6 +135,15 @@ do_install() {
         _ok "nxce → $bin_dir/nxce"
     else
         _info "nxce.py not found in $SCRIPT_DIR — skipping nxce install"
+    fi
+
+    # Install dicgenerat (spray dictionary generator) — optional, no cron
+    if [[ -f "$dicgen_src" ]]; then
+        cp "$dicgen_src" "$bin_dir/dicgenerat"
+        chmod +x "$bin_dir/dicgenerat"
+        _ok "dicgenerat → $bin_dir/dicgenerat"
+    else
+        _info "dicgenerat.py not found in $SCRIPT_DIR — skipping dicgenerat install"
     fi
 
     # Install NXC custom modules to ~/.nxc/modules/
@@ -203,7 +213,7 @@ do_uninstall() {
     local removed=0
 
     # Remove binaries from all known locations
-    for name in nxc_updater nxc_collector nxce; do
+    for name in nxc_updater nxc_collector nxce dicgenerat; do
         for loc in "$INSTALL_BIN/$name" "$HOME/bin/$name"; do
             if [[ -f "$loc" ]]; then
                 rm -f "$loc"
@@ -441,14 +451,14 @@ nxc_collector — NXC Collector client setup
 Usage:
   nxc_collector --install
       Install (or update) client scripts and setup cron.
-      Installs: nxc_updater, nxc_collector, nxce (if nxce.py present).
+      Installs: nxc_updater, nxc_collector, nxce, dicgenerat (if present).
       NXC modules: collector_dc.py → ~/.nxc/modules/collector_dc.py
                    collector_hosts.py → ~/.nxc/modules/collector_hosts.py
       If already installed — overwrites scripts, updates cron, keeps config.
       Must be run from the directory containing nxc_updater.py.
 
   nxc_collector --install -rm
-      Uninstall: remove scripts (nxc_updater, nxc_collector, nxce),
+      Uninstall: remove scripts (nxc_updater, nxc_collector, nxce, dicgenerat),
       NXC modules, and cron entries. Config and log are kept.
 
   nxc_collector -ws [options]

@@ -11,7 +11,7 @@ Built on top of [NetExec](https://github.com/Pennyw0rth/NetExec) · multi-operat
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-e2e8f0?style=flat-square)](https://github.com)
 
-[🇬🇧 English docs](wiki/en/Wiki%20-%20table%20of%20contents.md) · [🇷🇺 Документация](wiki/rus/Wiki%20-%20%D0%BE%D0%B3%D0%BB%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5.md) · [⚡ Quick Start](#-quick-start)
+[🇬🇧 English docs](wiki/en/Wiki%20-%20table%20of%20contents.md) · [🇷🇺 Документация](wiki/rus/Wiki%20-%20%D0%BE%D0%B3%D0%BB%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5.md) · [⚡ Quick Start](#-quick-start) · [🆕 What's New](whats_new.md)
 
 <br>
 
@@ -51,12 +51,14 @@ Everything runs on your machine. No cloud, no Redis, no Postgres — just two SQ
 ### 1 — Server
 
 ```bash
-git clone https://github.com/YOURNAME/penhub.git && cd penhub
-pip install fastapi uvicorn openpyxl
+git clone https://github.com/izBvD/penhub.git && cd penhub
+pip install -r requirements.txt
 python3 server.py --host 0.0.0.0 --port 322 --password "StrongPasswordHere!"
 ```
 
 Open `http://<server-ip>:322/` → log in → create a project.
+
+> 💡 **No internet on the server machine?** Install Python and all dependencies offline on Windows with the bundled [`offline_windows_installer/`](offline_windows_installer) (`install.bat` — bundled Python + wheels, no internet needed).
 
 ### 2 — Operator client
 

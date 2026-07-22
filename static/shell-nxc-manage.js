@@ -166,18 +166,16 @@ async function restoreIp(td) {
 }
 
 async function loadDpapi() {
-  const lim = pageSize || 999999;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT});
   if (srch) p.set('search', srch);
   const r = await apiFetch('/api/dpapi?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total; renderDpapi(_sortRows(d.rows)); renderPager();
+  renderDpapi(_sortPaginate(d.rows)); renderPager();
 }
 
 async function loadVulns() {
-  const lim = pageSize || 200;
-  const p = new URLSearchParams({workspace_id:ws.id, page, limit:lim});
+  const p = new URLSearchParams({workspace_id:ws.id, page:1, limit:_ALL_LIMIT});
   if (srch) p.set('search', srch);
   if (andMode && andVulns.size > 0) {
     p.set('vulns', Array.from(andVulns).join(','));
@@ -188,7 +186,7 @@ async function loadVulns() {
   const r = await apiFetch('/api/vulns?' + p);
   if (!r.ok) return;
   const d = await r.json();
-  total = d.total; renderVulns(d.rows); renderPager();
+  renderVulns(_sortPaginate(d.rows)); renderPager();
 }
 
 async function loadStats() {

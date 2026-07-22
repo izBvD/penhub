@@ -11,9 +11,11 @@ const Shell = {
     const nxcDiv = document.getElementById('appContent');
     const hkDiv  = document.getElementById('mod-hashkiller');
     const tbDiv  = document.getElementById('mod-toolbox');
+    const rpDiv  = document.getElementById('mod-reports');
     if (nxcDiv) nxcDiv.style.display = moduleId === 'nxc-collector' ? 'flex' : 'none';
     if (hkDiv)  hkDiv.style.display  = moduleId === 'hashkiller'    ? 'flex' : 'none';
     if (tbDiv)  tbDiv.style.display  = moduleId === 'toolbox'       ? 'flex' : 'none';
+    if (rpDiv)  rpDiv.style.display  = moduleId === 'reports'       ? 'flex' : 'none';
 
     // Lazy-load fragment if this is the first activation
     if (!this._loaded[moduleId]) {
@@ -26,7 +28,7 @@ const Shell = {
     const sidebar = document.getElementById('sidebar');
     const nav     = document.getElementById('sidebarNav');
     if (sidebar && sidebar.classList.contains('collapsed') && nav) {
-      const el = nav.querySelector('.sb-item.sb-nxc.active,.sb-item.sb-hk.active,.sb-item.sb-tb.active');
+      const el = nav.querySelector('.sb-item.sb-nxc.active,.sb-item.sb-hk.active,.sb-item.sb-tb.active,.sb-item.sb-rp.active');
       if (el) {
         el.classList.remove('active');
         el.classList.add('sb-collapsing');
@@ -40,7 +42,7 @@ const Shell = {
     // renderSidebar() inserts it already with .active (128px), so we briefly
     // strip the class, force a reflow, then restore it to trigger the transition.
     if (sidebar && sidebar.classList.contains('collapsed') && nav) {
-      const newEl = nav.querySelector('.sb-item.sb-nxc.active,.sb-item.sb-hk.active,.sb-item.sb-tb.active');
+      const newEl = nav.querySelector('.sb-item.sb-nxc.active,.sb-item.sb-hk.active,.sb-item.sb-tb.active,.sb-item.sb-rp.active');
       if (newEl) {
         newEl.classList.remove('active');
         void newEl.offsetHeight; // force paint at 34px
@@ -53,6 +55,8 @@ const Shell = {
       HKModule.onActivate(ws);
     } else if (moduleId === 'toolbox') {
       TBModule.onActivate(ws);
+    } else if (moduleId === 'reports') {
+      RPModule.onActivate(ws);
     }
   },
 
@@ -93,6 +97,7 @@ const ModuleRegistry = {
 ModuleRegistry.register({id:'nxc-collector',name:'NXC Collector',icon:'📡',group:'Modules',order:10,colorCls:'sb-nxc'});
 ModuleRegistry.register({id:'hashkiller',   name:'HashKiller',   icon:'🗡',group:'Modules',order:20,colorCls:'sb-hk' });
 ModuleRegistry.register({id:'toolbox',      name:'Toolbox',      icon:'⚙', group:'Modules',order:30,colorCls:'sb-tb' });
+ModuleRegistry.register({id:'reports',      name:'Reports',      icon:'📄',group:'Modules',order:40,colorCls:'sb-rp' });
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const LIVE_MS      = 5000;
@@ -141,6 +146,7 @@ const VULN_COLUMNS = [
   {slug:'runasppl',       label:'RunAsPPL',       group:'admin'},
   {slug:'uac',            label:'UAC',            group:'admin'},
 ];
+const _VULN_SLUGS = new Set(VULN_COLUMNS.map(c => c.slug));
 const VULN_GROUPS = [
   {id:'remote', label:'REMOTE'},
   {id:'coerce', label:'COERCE'},

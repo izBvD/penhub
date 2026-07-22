@@ -39,6 +39,13 @@ Usage (from server.py):
 # ║     • Добавь show/hide div-контейнера (блок const nxcDiv / hkDiv / tbDiv)    ║
 # ║     • Добавь вызов XModule.onActivate(ws) в блок "Per-module activation"     ║
 # ║                                                                              ║
+# ║  6b. static/shell-nxc-shell.js — ДВА switch по id (оба обязательны):         ║
+# ║     • sbNavigate(): case '<id>': Shell.activate('<id>'); break;              ║
+# ║       ИНАЧЕ клик по плитке не активирует модуль (уходит в default)           ║
+# ║     • _sbIsActive(): case '<id>': return Shell.isActive('<id>');             ║
+# ║       ИНАЧЕ плитка не получит .active (нет подсветки и вертикальной          ║
+# ║       развёртки в свёрнутом сайдбаре)                                        ║
+# ║                                                                              ║
 # ║  7. static/shell-projects.js → openProject()                                 ║
 # ║     • Добавь строку: if (Shell.isActive('<id>')) XModule.onActivate(ws);     ║
 # ║                                                                              ║
@@ -62,6 +69,7 @@ from fastapi.staticfiles import StaticFiles
 import modules.nxc_collector  # noqa: F401
 import modules.hashkiller      # noqa: F401
 import modules.toolbox         # noqa: F401
+import modules.reports         # noqa: F401
 # ← добавь сюда: import modules.<name>  # noqa: F401
 
 from penhub.shell.registry import shell_registry

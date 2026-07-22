@@ -112,6 +112,38 @@ const HKModule = {
     }
   },
 
+  // ── Import by password (hashed to NT locally, then usable by KILL THEM ALL) ──
+  async doImportPasswords() {
+    const text = (this._g('pwText')?.value || '').trim();
+    const fi   = this._g('pwFile');
+    const file = fi?.files[0];
+    if (!text && !file) { this._setMsg('pwResult', 'Paste passwords or select a file first', 'err'); return; }
+    const btn = this._g('pwImportBtn');
+    if (btn) btn.disabled = true;
+    this._setMsg('pwResult', 'Adding…', 'info');
+    try {
+      const fd = new FormData();
+      if (text) fd.append('text', text);
+      if (file) fd.append('file', file);
+      const r = await fetch('/api/hk/import-passwords', {method:'POST', body:fd});
+      if (!r.ok) { this._setMsg('pwResult', 'Server error: ' + r.status, 'err'); return; }
+      const d = await r.json();
+      if (d.total_lines === 0) {
+        this._setMsg('pwResult', 'Nothing to add — paste passwords or upload a list', 'err');
+        return;
+      }
+      const parts = [`added: ${d.added}`, `skipped: ${d.skipped}`];
+      if (d.warned > 0) parts.push(`⚠ conflicts (warning): ${d.warned}`);
+      const cls = d.warned > 0 ? 'warn' : d.added > 0 ? 'ok' : 'info';
+      this._setMsg('pwResult', parts.join('  |  '), cls);
+      if (d.added > 0 || d.warned > 0) this.loadStats();
+    } catch(e) {
+      this._setMsg('pwResult', 'Error: ' + e.message, 'err');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  },
+
   // ── Import server-side file (hk_inbox/large.potfile) ──────────────────────
   async importServerFile(ramKiller = false) {
     let st;

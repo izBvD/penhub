@@ -120,7 +120,9 @@ function resetFilters() {
 }
 
 function deduplicateRows(rows) {
-  // TZ key: domain + login + password (not per-host).
+  // TZ key: domain + login + password + host ip (per-host).
+  // Auth-relation rows keep one row per credential x host; same-host dups from
+  // other protocols/operators collapse. Rows without ip dedup by the triple.
   // Priority: plaintext > hash; admin > loggedin; more fields (SMB preferred).
   // GUARD: Server mirror — data_service.dedup_results(). Keep ranking logic in sync.
   const protoRank = p => p === 'SMB' ? 2 : p === 'LDAP' ? 1 : 0;
@@ -131,7 +133,7 @@ function deduplicateRows(rows) {
   const byKey  = new Map();
   const acredK = new Set();
   for (const r of rows) {
-    const k = `${(r.cred_domain||r.domain||'').toLowerCase()}|${(r.username||'').toLowerCase()}|${(r.password||'')}`;
+    const k = `${(r.cred_domain||r.domain||'').toLowerCase()}|${(r.username||'').toLowerCase()}|${(r.password||'')}|${(r.ip||'')}`;
     if (r.admin_cred == 1) acredK.add(k);
     const ex = byKey.get(k);
     if (!ex || rank(r) > rank(ex)) byKey.set(k, r);
@@ -168,7 +170,11 @@ function _sortVal(r, col) {
     case 'share':        return (r.name         || '').toLowerCase();
     case 'read':         return r.read  ? '1' : '0';
     case 'write':        return r.write ? '1' : '0';
-    default:             return '';
+    default:
+      // VULNS matrix columns: tri-state (1 YES / 0 no / null|undefined —). Rank so that
+      // ascending is — < no < YES (mirrors read/write, where the "present" state sorts last).
+      if (_VULN_SLUGS.has(col)) { const v = r[col]; return v === 1 ? 2 : v === 0 ? 1 : 0; }
+      return '';
   }
 }
 
@@ -195,7 +201,9 @@ function setSortBy(col) {
 //   _copyTd       → every credential row (nxc/dup copy + manage hide/restore button)
 //   _hostActionTd → every host row (manage hide/restore button)
 //   _rowClass     → every credential row (admin/acred highlight)
-//   _sortRows()   → wrap d.rows before passing to render* (client-side sort)
+//   _sortPaginate → server-fetched loaders: fetch ALL rows (limit _ALL_LIMIT) then
+//                   _sortPaginate(d.rows) so sorting spans every page, not just the current one
+//                   (_paginate for pre-arranged lists like ACRED ghosts; _sortRows = sort only)
 //   _dispPass()   → use instead of r.password directly (HK-bruted display)
 //   copyable      → every text cell with a value worth copying
 // Checklist for any new export path (view=X in export.py / _qp() in shell.js):

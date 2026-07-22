@@ -494,6 +494,24 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_notif_ws ON notifications(workspace_id, id);
         """)
 
+        # timeline_nodes — Reports module TIMELINE. Holds canonical milestone
+        # OVERRIDES (<=1 per non-custom kind, enforced by the partial unique index)
+        # and CUSTOM nodes. Auto canonical values are computed on read, not stored.
+        cur.executescript("""
+            CREATE TABLE IF NOT EXISTS timeline_nodes (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                workspace_id  INTEGER NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+                kind          TEXT NOT NULL,
+                label         TEXT,
+                ts            TEXT,
+                detail        TEXT,
+                created_at    TEXT
+            );
+            CREATE INDEX IF NOT EXISTS idx_timeline_ws ON timeline_nodes(workspace_id);
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_timeline_canonical
+                ON timeline_nodes(workspace_id, kind) WHERE kind != 'custom';
+        """)
+
 
 def get_or_create_workspace(cur, name: str) -> int:
     # INSERT OR IGNORE handles concurrent syncs racing to create the same workspace.

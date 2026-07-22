@@ -158,7 +158,7 @@ NOT PWN3D IPs — downloads not_pwn3d_ip.txt separately (all hosts with no admin
       <div class="tb-env-group">
         <div class="actions-row">
           <button class="btn tb-dl-btn" onclick="TBModule.downloadScripts()"
-                  title="Download nxc_collector, nxce.py, nxc_updater.py as ZIP">
+                  title="Download nxc_collector, nxc_updater.py, nxce.py, dicgenerat.py as ZIP">
             &#8595; DOWNLOAD SCRIPTS</button>
           <span class="tb-hint" style="margin-left:4px">
             Install or Update: <code>./nxc_collector --install</code> &mdash; then reopen terminal
@@ -207,6 +207,44 @@ NOT PWN3D IPs — downloads not_pwn3d_ip.txt separately (all hosts with no admin
             &#10021; COPY BH CONFIG</button>
         </div>
         <div id="copyBhConfigResult" class="result-msg"></div>
+      </div>
+
+      <!-- How to use dicgenerat (collapsible) -->
+      <div class="tb-spray-section">
+        <div class="tb-spray-label how-to-toggle" onclick="TBModule.toggleHowTo('3')">
+          <span class="how-to-arrow" id="tbHowArrow3">&#9654;</span> HOW TO USE &mdash; dicgenerat
+        </div>
+        <div id="tbHowToBody3" class="how-to-body" hidden>
+          <pre>
+dicgenerat — spray dictionary generator. Installed with the operator scripts
+(nxc_collector --install), run manually — it is NOT scheduled. Pulls the
+workspace creds from the server and builds two wordlists.
+
+    dicgenerat                 # current workspace from ~/.nxc-collector.conf
+    dicgenerat -ws myproj      # override workspace
+    dicgenerat -o /tmp/dict    # output directory (default: current)
+
+OUTPUT (named after the workspace):
+    &lt;ws&gt;_base.txt     — unique passwords (incl. cracked), logins, domains, DPAPI.
+    &lt;ws&gt;_mutated.txt  — login mutations: EN→RU translit typed on the EN keyboard
+                       layout, case variants, digit/symbol + year tails.
+
+STRIP FLAGS — build the stem before mutating (handy for initials like AVivanov):
+    -sb SEP   cut the first SEP from the left and everything before it   (AV_ivanov → ivanov)
+    -sa SEP   cut the last SEP and everything after it                   (ivanov_av → ivanov)
+    -b N      cut exactly N chars from the front                         (AVivanov -b 2 → ivanov)
+    -a N      cut exactly N chars from the back
+
+CRACK THE UN-BRUTEFORCED HASHES
+  In HashKiller, ③ HASHES.TXT downloads every uncracked NT hash as &lt;ws&gt;_hashes.txt.
+  Run a straight dictionary attack (-m 1000 = NTLM) with the generated wordlist:
+
+    hashcat -a 0 -m 1000 &lt;ws&gt;_hashes.txt &lt;ws&gt;_mutated.txt
+
+  (also worth a pass against &lt;ws&gt;_base.txt). Feed cracked plaintexts back via
+  HashKiller import, then KILL THEM ALL to fill the Brutforced column.
+          </pre>
+        </div>
       </div>
 
     </div><!-- /card operator env -->

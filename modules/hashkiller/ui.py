@@ -43,6 +43,29 @@ Unknown hash types are skipped. Multiple lines accepted. Paste .potfile contents
           &#128165; RAM-KILLER</button>
       </div>
       <div id="importResult" class="result-msg"></div>
+
+      <!-- Inner block: add by password (hashed locally to NT, then usable by KILL THEM ALL) -->
+      <div class="import-sub">
+        <div class="card-title" style="margin-bottom:6px">
+          &#43; ADD BY PASSWORD &mdash; one password per line (hashed to NT locally)
+        </div>
+        <textarea class="import-area" id="pwText" placeholder="One password per line. Each is converted to its NT hash and added to the DB, so KILL THEM ALL can apply it.
+Password1
+Summer2024!
+Company@123
+
+Blank lines and # comments are skipped."></textarea>
+        <div class="import-row">
+          <label class="file-label" title="Upload a password list (.txt)">
+            &#128196; Upload .txt
+            <input type="file" id="pwFile" accept=".txt,.lst,.dic,text/*"
+                   hidden onchange="HKModule.onFileSelected(this,'pwFileName')">
+          </label>
+          <span id="pwFileName" class="file-name"></span>
+          <button class="btn action-btn" id="pwImportBtn" onclick="HKModule.doImportPasswords()">&#9654; ADD PASSWORDS</button>
+        </div>
+        <div id="pwResult" class="result-msg"></div>
+      </div>
     </div>
 
     <!-- ═══ BLOCK 2: ACTIONS ══════════════════════════════════════════════ -->
@@ -157,6 +180,12 @@ IMPORT (Block 1)
     $NT$HASH:PLAIN      — $NT$8846f7...:Password1
   Unknown hash types are silently skipped.
   The empty NT hash (31d6...) is always stored as &lt;empty_password&gt;.
+
+  ADD BY PASSWORD — paste (or upload) a plaintext password list, one per line.
+    Each password is hashed locally to its NT hash and stored as a pair, so
+    KILL THEM ALL applies it just like an imported hash:plain pair. Use it to
+    push a wordlist / known passwords straight into the DB without hashcat.
+    Blank lines and # comments are skipped; passwords are stored verbatim.
 
   SERVER FILE — for very large potfiles (multi-GB) that are impractical to
     upload through the browser. Place the file on the server at

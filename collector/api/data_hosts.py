@@ -109,7 +109,7 @@ def get_shares(
         total = cur.execute(f"SELECT COUNT(*) {base_q}", params).fetchone()[0]
         offset = (page - 1) * limit
         rows = cur.execute(f"""
-            SELECT h.ip, c.username, c.password, c.brutforced, s.name, s.remark, s.read, s.write, s.operator
+            SELECT h.ip, c.domain, c.username, c.password, c.brutforced, s.name, s.remark, s.read, s.write, s.operator
             {base_q}
             ORDER BY s.id DESC
             LIMIT ? OFFSET ?

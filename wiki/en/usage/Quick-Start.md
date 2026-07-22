@@ -5,7 +5,7 @@
 On the server (details — **[Installation — Server](../install/Installation-Server.md)**):
 
 ```bash
-pip install fastapi uvicorn openpyxl
+pip install -r requirements.txt
 python3 server.py --host 0.0.0.0 --port 322 --password "StrongPasswordHere!"
 ```
 
@@ -52,7 +52,7 @@ The **NXC Collector** module will start filling up. Try:
 
 - The **PWN3D!** counter in the header — hosts where you have admin access.
 - Protocol row: click **SMB**, then the **PWN3D!** sub-tab to see admin sessions.
-- **ALL CREDS ↓** — export all unique credentials to XLSX.
+- The **Reports** module (📄, under Toolbox) → **ALL CREDS ↓** — export all unique credentials to XLSX.
 
 ![](../../images/nxc-collector-pwn3d.png)
 

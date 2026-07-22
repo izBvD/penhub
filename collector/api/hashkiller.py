@@ -81,6 +81,21 @@ async def hk_import(
     return hk_db.bulk_import(all_text)
 
 
+@router.post("/api/hk/import-passwords", dependencies=[Depends(verify_token)])
+async def hk_import_passwords(
+    text: str = Form(default=""),
+    file: UploadFile = File(default=None),
+):
+    """Add a plaintext password list — each line is hashed to its NT hash and stored as a pair."""
+    all_text = text or ""
+    if file and file.filename:
+        raw = await file.read(_IMPORT_MAX_BYTES + 1)
+        if len(raw) > _IMPORT_MAX_BYTES:
+            raise HTTPException(status_code=413, detail="File too large — max 50 MB")
+        all_text += "\n" + raw.decode("utf-8", errors="replace")
+    return hk_db.import_passwords(all_text)
+
+
 # ── Server-side file import (hk_inbox) ──────────────────────────────────────────
 
 @router.get("/api/hk/import-file/check", dependencies=[Depends(verify_token)])

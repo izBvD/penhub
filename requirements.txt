@@ -1,0 +1,18 @@
+# PenHub server dependencies — Python 3.12+
+#
+#   pip install -r requirements.txt
+#
+# python-multipart is REQUIRED: FastAPI uses it to parse multipart/form-data,
+# i.e. every file upload (HashKiller DB / potfile / password list, Toolbox XLSX
+# import, custom-import template). Missing it → 400/500 on those endpoints.
+#
+# Nothing else is needed: the NT-hash (MD4) is a self-contained pure-stdlib
+# implementation (collector/nt_hash.py), so pycryptodome is NOT required.
+# The operator-side custom nxc modules (collector_dc.py / collector_hosts.py)
+# depend on NetExec + impacket and are installed on operator machines only —
+# they are NOT server dependencies.
+
+fastapi>=0.115
+uvicorn>=0.30
+openpyxl>=3.1
+python-multipart>=0.0.9

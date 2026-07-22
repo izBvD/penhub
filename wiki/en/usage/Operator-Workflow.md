@@ -67,7 +67,7 @@ view ──► crack ──► spray ──► sync ──► view …
 ## Phase 5 — Report and wrap-up
 
 - Use the XLSX export from **VULNS** and **[Vulnerability Details and Remediation](../vulns/Vulnerability-Details.md)** as a vulnerability report appendix.
-- Export the final credentials table (**ALL CREDS ↓**).
+- In the **[Reports](../modules/Module-Reports.md)** module: the final credentials table (**ALL CREDS ↓**), the vulnerability matrix (**ALL VULNS ↓**), local admins (**LOCAL ADMINS ↓**), and the project timeline (**DOWNLOAD TIMELINE ↓**).
 - **Archive** the project when done — this freezes it (no new syncs accepted) and automatically runs a final SMART Enrich so found plaintext passwords are saved to the global hash database for future engagements.
 - Projects can later be moved to **Recycle** (soft delete, name reserved) or ultimately deleted permanently.
 

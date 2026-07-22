@@ -31,6 +31,8 @@ Unknown lines are skipped.
 
 Result shows `added / already existed / time (speed) / cache MB`.
 
+**➕ ADD BY PASSWORD** (sub-block) — paste or upload a plaintext password list, one per line. Each password is hashed locally to NT and stored as a `hash:plaintext` pair — a quick way to push a wordlist or a batch of known passwords straight into the DB without going through hashcat. Blank lines are skipped.
+
 > SERVER FILE / RAM-KILLER are designed to ingest gigabytes of cracked hashes. Such lists can be produced by transforming a large wordlist into `hash:plaintext` format yourself.
 >
 > After a large import **always** check and clear warnings.

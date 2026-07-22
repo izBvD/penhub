@@ -6,12 +6,24 @@ PenHub has three types of exports: **XLSX** tables (for review/reporting), **TXT
 
 ## From NXC Collector
 
-| Export          | Contents                                                                                    |
-| --------------- | ------------------------------------------------------------------------------------------- |
-| **ALL CREDS ↓** | All *unique* credentials in the project, split into logical blocks. XLSX.                   |
-| **XLSX ↓**      | The *current* table view (respecting active GUEST, UNIQ, HK-bruted filters). XLSX.          |
+| Export     | Contents                                                                           |
+| ---------- | ---------------------------------------------------------------------------------- |
+| **XLSX ↓** | The *current* table view (respecting active GUEST, UNIQ, HK-bruted filters). XLSX. |
 
 The **UNIQ** option deduplicates by `domain+login+password`, preferring plaintext over hash and admin over loggedin. The **HK-bruted** filter, when enabled, substitutes known plaintext for hashes before export — so the table contains cracked passwords instead of hashes.
+
+---
+
+## From Reports
+
+| Export                  | Contents                                                                                                              |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **ALL CREDS ↓**         | All *unique* credentials in the project, split into logical blocks. XLSX. *(previously in NXC Collector)*            |
+| **ALL VULNS ↓**         | Per-host vulnerability matrix (the VULNS — ALL view). XLSX.                                                          |
+| **LOCAL ADMINS ↓**      | Local admins: a section of real local admins + a section of local accounts whose credentials repeat across machines. XLSX. |
+| **DOWNLOAD TIMELINE ↓** | Engagement timeline (First sync → First Domain Admin + your own points) with intervals between points. TXT.          |
+
+See **[Module — Reports](../modules/Module-Reports.md)**.
 
 ![](../../images/export-allcred-xlsx.png)
 

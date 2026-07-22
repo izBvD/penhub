@@ -91,7 +91,6 @@ function exportXlsx() {
   if (hkBrutedMode) p.set('hk', '1');
   window.open('/api/export/xlsx?' + p, '_blank');
 }
-function exportAllCred() { if (ws) window.open('/api/export/allcred?workspace_id=' + ws.id, '_blank'); }
 
 // ── Sidebar ────────────────────────────────────────────────────────────────
 function _sbIsActive(id) {
@@ -107,6 +106,7 @@ function _sbIsActive(id) {
     case 'nxc-collector': return Shell.isActive('nxc-collector');
     case 'hashkiller':    return Shell.isActive('hashkiller');
     case 'toolbox':       return Shell.isActive('toolbox');
+    case 'reports':       return Shell.isActive('reports');
     default:              return false;
   }
 }
@@ -198,6 +198,7 @@ function sbNavigate(id) {
     case 'nxc-collector': Shell.activate('nxc-collector'); break;
     case 'hashkiller':    Shell.activate('hashkiller'); break;
     case 'toolbox':       Shell.activate('toolbox'); break;
+    case 'reports':       Shell.activate('reports'); break;
     default: {
       const m = ModuleRegistry._modules.find(m => m.id === id);
       if (m && m.route && m.route !== '#') window.location.href = m.route;

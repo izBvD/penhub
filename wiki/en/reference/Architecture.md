@@ -29,7 +29,8 @@ The server application is a **shell** into which **modules** are plugged.
 PenHub Shell
 ├── NXC Collector   (eager — built into shell, loaded immediately)
 ├── HashKiller      (lazy — loaded on first open)
-└── Toolbox         (lazy — loaded on first open)
+├── Toolbox         (lazy — loaded on first open)
+└── Reports         (lazy — loaded on first open)
 ```
 
 - The **shell** handles navigation, authorization, the common layout, module registry, and delivery of each module's UI fragment.
@@ -41,6 +42,7 @@ PenHub Shell
 | NXC Collector | `modules/nxc_collector/` | Eager   | 📡 green   |
 | HashKiller    | `modules/hashkiller/`    | Lazy    | 🗡 blue    |
 | Toolbox       | `modules/toolbox/`       | Lazy    | ⚙ orange   |
+| Reports       | `modules/reports/`       | Lazy    | 📄 purple  |
 
 Lazy module UI is delivered via `GET /api/shell/module/{id}/ui` (under authorization).
 

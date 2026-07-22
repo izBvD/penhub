@@ -27,6 +27,8 @@
 .import-area::placeholder{color:var(--fg2);white-space:pre}
 .import-row{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
 .import-row .spacer{flex:1 1 auto}
+.import-sub{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
+.import-sub .import-area{height:140px}
 
 /* ── File labels ─────────────────────────────────────────────────────────── */
 .file-label,.upload-label{display:inline-block;background:transparent;border:1px solid var(--border);

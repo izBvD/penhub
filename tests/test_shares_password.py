@@ -38,6 +38,14 @@ def test_shares_returns_password(auth_client):
     assert rows[0]["password"] == "SecretPass"
 
 
+def test_shares_returns_domain(auth_client):
+    wid = _setup(auth_client)
+    r = auth_client.get(f"/api/shares?workspace_id={wid}")
+    rows = r.json()["rows"]
+    assert "domain" in rows[0], "domain field missing from shares response"
+    assert rows[0]["domain"] == "corp"
+
+
 def test_shares_returns_brutforced(auth_client):
     wid = _setup(auth_client, password="NTHash1", brutforced="CrackedPass")
     r = auth_client.get(f"/api/shares?workspace_id={wid}")

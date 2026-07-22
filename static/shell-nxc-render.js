@@ -569,7 +569,7 @@ function renderProtoHosts(rows) {
 
 function renderSmbShares(rows) {
   if (!rows.length) { empty('No SMB shares found'); return; }
-  const hdr = [['IP','ip'],['Username','username'],['Password','password'],['Share','share'],['Remark',''],['Read','read'],['Write','write'],['Op','op']];
+  const hdr = [['IP','ip'],['Domain','domain'],['Username','username'],['Password','password'],['Share','share'],['Remark',''],['Read','read'],['Write','write'],['Op','op']];
   let h = '<table><thead><tr>' + hdr.map(([l,k]) => _thSort(l,k)).join('') + '</tr></thead><tbody>';
   for (const r of rows) {
     const rd  = r.read  ? '<span class="badge safe">R</span>'  : '<span class="badge na">—</span>';
@@ -578,6 +578,7 @@ function renderSmbShares(rows) {
     const pwdCls = r.brutforced ? ' class="copyable sv-cracked"' : ' class="copyable"';
     h += `<tr>
       ${_ipTd(r.ip)}
+      <td class="copyable" onclick="copyField(this)">${esc(r.domain||'')}</td>
       <td class="copyable" onclick="copyField(this)">${esc(r.username||'')}</td>
       <td${pwdCls} onclick="copyField(this)">${esc(pwd)}</td>
       <td class="copyable" onclick="copyField(this)"><b>${esc(r.name||'')}</b></td>

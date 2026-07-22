@@ -43,13 +43,14 @@ Standalone controls not related to protocol filters:
 
 | Control          | What it does                                                                                                                                      |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **ALL CREDS ↓**  | Export *all unique* project credentials to XLSX.                                                                                                  |
 | **XLSX ↓**       | Export the *current* table view to XLSX respecting active filters.                                                                                |
 | **GUEST**        | On by default. Hides Guest / DefaultAccount / WDAGUtilityAccount accounts (case-insensitive).                                                     |
 | **UNIQ**         | Unique credentials by domain+login+password; on collision prefers plaintext over hash, admin over loggedin, SMB > LDAP > others.                  |
 | **HK-bruted 🔓** | On by default. If a known plaintext exists for a hash in HashKiller — shows the password instead of the hash.                                     |
 
 Also in row 2: **local search**. Searches within the current table.
+
+> The **ALL CREDS ↓** button moved from here to the **[Reports](Module-Reports.md)** module. The export itself is unchanged.
 
 ---
 

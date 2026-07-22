@@ -23,7 +23,7 @@ from collector.db import db_cursor
 router = APIRouter()
 
 
-_SCRIPT_FILES = ["nxc_collector", "nxce.py", "nxc_updater.py", "collector_dc.py", "collector_hosts.py"]
+_SCRIPT_FILES = ["nxc_collector", "nxce.py", "nxc_updater.py", "dicgenerat.py", "collector_dc.py", "collector_hosts.py"]
 
 
 # ── Block 1: Custom import ────────────────────────────────────────────────────

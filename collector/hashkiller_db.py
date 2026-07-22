@@ -386,6 +386,25 @@ def bulk_import(text: str) -> dict:
     return result
 
 
+def import_passwords(text: str) -> dict:
+    """
+    Import a plaintext password list (one per line). Each password is hashed locally to its
+    NT hash and stored as a (nt_hash, plaintext) pair, so KILL THEM ALL can apply it exactly
+    like an imported hash:plain pair. Reuses the precise import core, so conflict/counting
+    semantics match bulk_import (same hash + different plaintext -> both get warning=1).
+
+    Only blank / whitespace-only lines are skipped — '#' is NOT a comment marker
+    (it is a common password character, so lines starting with '#' are passwords).
+    The password itself is stored verbatim (leading/trailing whitespace is part of
+    the password — not stripped).
+    Returns {added, skipped, warned, total_lines}.
+    """
+    passwords = [line for line in text.splitlines() if line.strip()]
+    result = _import_pairs((nt_hash(pw), pw) for pw in passwords)
+    result["total_lines"] = len(passwords)
+    return result
+
+
 # ── Upload / merge another HK DB ───────────────────────────────────────────────
 
 def merge_db_file(src_path) -> dict:

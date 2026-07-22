@@ -126,8 +126,9 @@ def get_results(
     with db_cursor() as cur:
         if dedup:
             # GUARD: dedup=True loads ALL matching rows into memory before paginating.
-            # For large workspaces this can be slow — used only for the "All" tab display.
-            # Mirrors client-side deduplicateRows() logic exactly.
+            # For large workspaces this can be slow — used by the results views
+            # ([+]/PWN3D! for every proto and the ALL tab) with the UNIQ filter on.
+            # Mirrors client-side deduplicateRows() logic exactly (host-aware key).
             all_rows = [dict(r) for r in cur.execute(select_q, params).fetchall()]
             deduped = dedup_results(all_rows)
             total = len(deduped)
