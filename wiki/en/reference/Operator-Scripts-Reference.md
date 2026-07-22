@@ -95,7 +95,8 @@ Data sourced from: `credentials` + `custom_credentials`; guest users and empties
 
 Installed by `nxc_collector --install` like `nxce` (copy into bin, `chmod +x`). Stdlib only. Unlike `nxce`, it pulls data **from the server via the API** (not from the local DB): config/token as `nxc_updater` (`~/.nxc-collector.conf`, `sha256(password)`), fetching `GET /api/credentials?hide_guest=false`, `/api/custom_creds`, `/api/dpapi`.
 
-Mutates every login in the project, turning them into passwords.
+
+On demand, the script automatically pulls and mutates every login in the project (including those from LSA+SAM, DPAPI, custom imports, …), turning them into passwords. In practice each login expands into 8,478 passwords after all mutations. When the EN→RU transliteration is ambiguous — e.g. `yeryomenko` (Ерёменко), where `ye`×`yo`×`e` can each be transliterated more than one way — the maximum possible number of variants (for the most complex login imaginable) is 135,648 passwords.
 
 | Flag       | Meaning                                        |
 | ---------- | ---------------------------------------------- |
