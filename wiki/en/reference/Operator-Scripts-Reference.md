@@ -1,12 +1,13 @@
 # Operator Scripts Reference
 
-Reference for the three operator scripts.
+Reference for the four operator scripts.
 Installation — **[Installation — Operator Client](../install/Installation-Operator-Client.md)**; usage scenarios — **[Operator Workflow](../usage/Operator-Workflow.md)**.
 
 ```
 nxc_collector   →  installer and configurator
 nxc_updater.py  →  sync engine (cron */10 + @reboot)
 nxce.py         →  offline extractor
+dicgenerat.py   →  dictionary generator for cracking hashes with hashcat
 ```
 
 ---
@@ -28,7 +29,7 @@ nxce.py         →  offline extractor
 
 | Command                     | Action                                                                                                                                                                                                                                                                                                              |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--install`                 | Copies `nxc_updater`, `nxc_collector`, `nxce` to `/usr/local/bin` (or `~/bin` if no write access) + `chmod +x`. Also copies NXC modules `collector_dc.py`, `collector_hosts.py` → `~/.nxc/modules/` (mkdir -p). Sets up cron `*/10` + `@reboot sleep 30`. Re-running updates scripts and modules, preserves config. |
+| `--install`                 | Copies `nxc_updater`, `nxc_collector`, `nxce`, `dicgenerat` to `/usr/local/bin` (or `~/bin` if no write access) + `chmod +x`. Also copies NXC modules `collector_dc.py`, `collector_hosts.py` → `~/.nxc/modules/` (mkdir -p). Sets up cron `*/10` + `@reboot sleep 30` (for `nxc_updater` only). Re-running updates scripts and modules, preserves config. |
 | `--install -rm`             | Removes binaries, NXC modules from `~/.nxc/modules/`, and cron entries. Config, log, and local DB are preserved.                                                                                                                                                                                                    |
 | `-ws` / `--workspace-setup` | Writes `~/.nxc-collector.conf`: `--server`, `--port`, `--operator`, `--pass`, `--workspace`. With `--workspace` also edits `~/.nxc/nxc.conf` and creates the nxc workspace.                                                                                                                                         |
 | `--bh-setup`                | Writes BloodHound settings to `~/.nxc/nxc.conf`: `--bh-ip/-login/-pass/-port/-enable`.                                                                                                                                                                                                                             |
@@ -87,3 +88,30 @@ Can work within a specific protocol: `smb ldap winrm mssql ssh` or `all`. Querie
 - `logins_H_brut.txt` / `hashes_for_brute.txt` (NT hashes)
 
 Data sourced from: `credentials` + `custom_credentials`; guest users and empties are skipped. Prints the ready-to-use `nxc … --no-bruteforce --continue-on-success` command.
+
+---
+
+## 4. `dicgenerat.py` — hashcat dictionary generator
+
+Installed by `nxc_collector --install` like `nxce` (copy into bin, `chmod +x`). Stdlib only. Unlike `nxce`, it pulls data **from the server via the API** (not from the local DB): config/token as `nxc_updater` (`~/.nxc-collector.conf`, `sha256(password)`), fetching `GET /api/credentials?hide_guest=false`, `/api/custom_creds`, `/api/dpapi`.
+
+Mutates every login in the project, turning them into passwords.
+
+| Flag       | Meaning                                        |
+| ---------- | ---------------------------------------------- |
+| `-ws NAME` | Workspace (overrides the one in the config)     |
+| `-o DIR`   | Output directory (default: current)             |
+| `-sb SEP`  | Cut the first `SEP` (separator) from the left and everything before it |
+| `-sa SEP`  | Cut the last `SEP` (separator) on the right and everything after it |
+| `-b N`     | Cut exactly N characters from the left           |
+| `-a N`     | Cut exactly N characters from the right          |
+
+Produces two files:
+- **`<ws>_base.txt`** — unique plaintext passwords (incl. bruteforced) + logins + domains (lowercased) + DPAPI logins/passwords.
+- **`<ws>_mutated.txt`** — login mutations: cut (`-sb/-sa/-b/-a`) → EN→RU transliteration (branching, cap 8) → "typed on an English keyboard layout" → case variants → tails from charset `0-9!@#$%&*_-.` (1/2/3 chars) + years `1970..now` → external `LC_ALL=C sort -u`.
+
+Feed the resulting dictionary to hashcat together with the project's uncracked hashes (the **↓ HASHES.TXT** button in HashKiller):
+
+```bash
+hashcat -a 0 -m 1000 <project>_hashes.txt <project>_mutated.txt
+```

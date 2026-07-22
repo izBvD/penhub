@@ -63,9 +63,9 @@
 
 Все необходимое для подготовки окружения оператора к работе (см. **[Установка — Клиент оператора](../install/Установка%20—%20Клиент%20оператора.md)**).
 
-- **↓ DOWNLOAD SCRIPTS** — ZIP с `nxc_collector`, `nxce.py`, `nxc_updater.py`, `collector_dc.py`, `collector_hosts.py`. 
+- **↓ DOWNLOAD SCRIPTS** — ZIP с `nxc_collector`, `nxce.py`, `nxc_updater.py`, `dicgenerat.py`, `collector_dc.py`, `collector_hosts.py`. 
 Установка : `./nxc_collector --install`, затем перезапустите терминал. 
-Установщик  кладёт три скрипта в `/usr/local/bin` (или `~/bin`) и два `.py` NXC-модуля в `~/.nxc/modules/`.
+Установщик  кладёт четыре скрипта в `/usr/local/bin` (или `~/bin`) и два `.py` NXC-модуля в `~/.nxc/modules/`.
 - **COPY CONFIG STRING** — формирует и копирует готовую команду:
   ```
   nxc_collector -ws --server http://<IP> --port <PORT> --pass "<пароль>" --workspace <проект> --operator <вы>

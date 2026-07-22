@@ -20,6 +20,17 @@ Paste or upload a plaintext password list (one per line); each password is hashe
 
 - **Fix:** passwords starting with `#` are no longer dropped as "comments" (`#` is a valid password character). Only blank lines are skipped.
 
+### 🧰 New operator script — `dicgenerat.py`
+
+`nxc_collector --install` now also installs **`dicgenerat.py`**, a hashcat dictionary generator for cracking the project's uncracked hashes. It pulls the workspace's credentials from the server (API) and produces two files: `<ws>_base.txt` (unique passwords + logins + domains + DPAPI creds) and `<ws>_mutated.txt` (login mutations — strip → EN↔RU transliteration → English-keyboard-layout → case variants → charset/year tails). Feed the result to hashcat together with the project's uncracked hashes:
+
+```bash
+dicgenerat -ws <project> -o .
+hashcat -a 0 -m 1000 <project>_hashes.txt <project>_mutated.txt
+```
+
+See the [Operator Scripts Reference](wiki/en/reference/Operator-Scripts-Reference.md).
+
 ### 📦 Installation
 
 - Added **`requirements.txt`** — install with `pip install -r requirements.txt`.

@@ -17,7 +17,7 @@
 ```
 
 - **Server**: Python / FastAPI / SQLite (WAL) + vanilla JS SPA. No bundler, no framework, no build step. Two SQLite files.
-- **Operator client**: three scripts. Described in **[Installation — Operator Client](../install/Installation-Operator-Client.md)** and **[Operator Scripts Reference](Operator-Scripts-Reference.md)**.
+- **Operator client**: four scripts. Described in **[Installation — Operator Client](../install/Installation-Operator-Client.md)** and **[Operator Scripts Reference](Operator-Scripts-Reference.md)**.
 
 ---
 

@@ -1,14 +1,15 @@
 # Installation — Operator Client
 
-Every operator running NetExec installs three small scripts and two custom NXC modules on their working machine. The scripts push nxc data to your server and pull back the unified database (merged with other operators). Everything uses **stdlib Python + bash only** — no pip packages required on the operator side.
+Every operator running NetExec installs four small scripts and two custom NXC modules on their working machine. The scripts push nxc data to your server and pull back the unified database (merged with other operators). Everything uses **stdlib Python + bash only** — no pip packages required on the operator side.
 
-Three scripts:
+Four scripts:
 
 | Script                 | Role                                                                                                                                                   |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `nxc_collector` (bash) | Installer and configurator. Places the other scripts, writes config, sets up cron. Does not manipulate data itself.                                    |
 | `nxc_updater.py`       | Sync engine. Runs from cron every 10 minutes: reads nxc databases, pushes to server, pulls the merged workspace back.                                  |
 | `nxce.py`              | Offline extractor ("PWN3D Extractor"). Reads the local merged database to build target lists and spray files. Does not contact the server. (see --help) |
+| `dicgenerat.py`        | Dictionary generator for cracking the project's uncracked hashes with hashcat. Pulls workspace creds from the server via the API and builds `<ws>_base.txt` + `<ws>_mutated.txt`. Installed like `nxce`. (see --help) |
 
 Two custom NXC modules (installed automatically to `~/.nxc/modules/` by `--install`):
 
@@ -21,7 +22,7 @@ These modules are re-implementations of existing nxc modules. The problem with t
 
 Results from both modules are saved to `nxc-vulns.db` in a separate workspace and sent to the server on the next `nxc_updater` run — they appear in the **VULNS** view in NXC Collector.
 
-> All flags for all three scripts are in **[Operator Scripts Reference](../reference/Operator-Scripts-Reference.md)**.
+> All flags for all four scripts are in **[Operator Scripts Reference](../reference/Operator-Scripts-Reference.md)**.
 
 ---
 
@@ -38,7 +39,7 @@ Results from both modules are saved to `nxc-vulns.db` in a separate workspace an
 The server serves a ready-made package and a config string. Just copy and paste.
 
 1. Log in to PenHub in your browser, open the project, go to **Toolbox** → **Operator Environment Config** block.
-2. Click **↓ DOWNLOAD SCRIPTS** — downloads a ZIP with `nxc_collector`, `nxc_updater.py`, `nxce.py`, `collector_dc.py`, `collector_hosts.py`.
+2. Click **↓ DOWNLOAD SCRIPTS** — downloads a ZIP with `nxc_collector`, `nxc_updater.py`, `nxce.py`, `dicgenerat.py`, `collector_dc.py`, `collector_hosts.py`.
 3. Unzip on the operator's machine and install:
 
 ```bash
@@ -48,7 +49,7 @@ chmod +x nxc_collector
 ./nxc_collector --install
 ```
 
-`--install` copies the three scripts to `/usr/local/bin` (or `~/bin` if no write access there), makes them executable, sets up cron (`*/10` + `@reboot`), and **copies `collector_dc.py` and `collector_hosts.py` to `~/.nxc/modules/`** — NetExec will pick them up automatically. After that — **restart your terminal**.
+`--install` copies the four scripts to `/usr/local/bin` (or `~/bin` if no write access there), makes them executable, sets up cron (`*/10` + `@reboot`, for `nxc_updater` only), and **copies `collector_dc.py` and `collector_hosts.py` to `~/.nxc/modules/`** — NetExec will pick them up automatically. After that — **restart your terminal**.
 
 ![](../../images/toolbox-block3-config.png)
 
@@ -115,6 +116,14 @@ nxce smb -u admin       # SMB admin credentials for user 'admin'
 nxce --brute ./spray    # write paired login/password/hash files for spray
 
 # and much more...
+```
+
+And to build a dictionary for cracking the project's hashes with hashcat (pulls data from the server via the API):
+
+```bash
+dicgenerat -ws <project> -o .    # → <project>_base.txt and <project>_mutated.txt
+# then crack the project's uncracked hashes (the HASHES.TXT button in HashKiller):
+hashcat -a 0 -m 1000 <project>_hashes.txt <project>_mutated.txt
 ```
 
 See: **[Operator Workflow](../usage/Operator-Workflow.md)**, all flags in **[Operator Scripts Reference](../reference/Operator-Scripts-Reference.md)**.

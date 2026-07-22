@@ -62,9 +62,9 @@ Prepare lists for credential spray runs.
 
 Everything needed to prepare an operator's environment (see **[Installation — Operator Client](../install/Installation-Operator-Client.md)**).
 
-- **↓ DOWNLOAD SCRIPTS** — ZIP with `nxc_collector`, `nxce.py`, `nxc_updater.py`, `collector_dc.py`, `collector_hosts.py`.
+- **↓ DOWNLOAD SCRIPTS** — ZIP with `nxc_collector`, `nxce.py`, `nxc_updater.py`, `dicgenerat.py`, `collector_dc.py`, `collector_hosts.py`.
   Install: `./nxc_collector --install`, then restart the terminal.
-  The installer places the three scripts in `/usr/local/bin` (or `~/bin`) and the two `.py` NXC modules in `~/.nxc/modules/`.
+  The installer places the four scripts in `/usr/local/bin` (or `~/bin`) and the two `.py` NXC modules in `~/.nxc/modules/`.
 - **COPY CONFIG STRING** — builds and copies the ready-to-use command:
   ```
   nxc_collector -ws --server http://<IP> --port <PORT> --pass "<password>" --workspace <project> --operator <you>
