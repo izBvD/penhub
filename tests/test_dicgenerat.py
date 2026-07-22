@@ -234,3 +234,26 @@ def test_argparse_defaults():
     args = dg._parse_args(["-ws", "proj", "-b", "2", "-sb", "_"])
     assert args.workspace == "proj" and args.b == 2 and args.sb == "_"
     assert args.a == 0 and args.sa is None
+
+
+# ── Task 9: --offline-file (logins from a file, no API) ──────────────────────
+
+def test_parse_args_offline_file():
+    args = dg._parse_args(["--offline-file", "/tmp/logins.txt"])
+    assert args.offline_file == "/tmp/logins.txt"
+    assert dg._parse_args([]).offline_file is None
+
+
+def test_read_offline_logins_strips_and_skips_blank(tmp_path):
+    f = tmp_path / "logins.txt"
+    f.write_text("alexeev\n\n  boss  \n\t\nivanov\n", encoding="utf-8")
+    assert dg.read_offline_logins(str(f)) == ["alexeev", "boss", "ivanov"]
+
+
+def test_offline_logins_get_same_mutations(tmp_path):
+    # a login read from file goes through the exact same pipeline as the API path
+    f = tmp_path / "logins.txt"
+    f.write_text("alexeev\n", encoding="utf-8")
+    logins = dg.read_offline_logins(str(f))
+    muts = list(dg.mutate_login(logins[0], charset="", years=[]))
+    assert "fktrcttd" in muts                      # алексеев on EN layout

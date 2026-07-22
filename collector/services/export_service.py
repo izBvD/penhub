@@ -18,16 +18,23 @@ def sanitize_cell(v):
     return v
 
 
-def xlsx_buf(headers: list, rows: list, sheet_name: str = "Data") -> BytesIO:
+def xlsx_buf(headers: list, rows: list, sheet_name: str = "Data",
+             wrap_cols: list | None = None) -> BytesIO:
     """
     Build an openpyxl workbook and return it as a BytesIO buffer.
 
     Each row may have an optional trailing tag string (e.g. "__admin__", "__hash__", "__dpapi__")
     used ONLY for row fill color — it is stripped before writing cell data.
+
+    wrap_cols: 0-based column indices whose data cells get wrap_text (for multi-line
+    cells joined by "\\n"). Default None = no wrapping (existing callers unaffected).
     """
     import openpyxl
     from openpyxl.styles import Font, PatternFill, Alignment
     from openpyxl.utils import get_column_letter
+
+    wrap_set = set(wrap_cols or ())
+    WRAP = Alignment(wrap_text=True, vertical="top")
 
     HEADER_FILL = PatternFill("solid", fgColor="2F75B6")
     HEADER_FONT = Font(bold=True, color="FFFFFF")
@@ -62,6 +69,8 @@ def xlsx_buf(headers: list, rows: list, sheet_name: str = "Data") -> BytesIO:
         for cell in ws[last_row]:
             if cell.data_type == 'f':
                 cell.data_type = 's'
+        for ci in wrap_set:
+            ws.cell(row=last_row, column=ci + 1).alignment = WRAP
         if row_type == "__admin__":
             fill = ADMIN_FILL
         elif row_type == "__hash__":

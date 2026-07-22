@@ -52,5 +52,6 @@ Final project-level exports.
 | **👑 ALL CREDS ↓** | All *unique* credentials in the project, split into logical blocks. XLSX. |
 | **⚡ ALL VULNS ↓** | Per-host vulnerability matrix (the VULNS — ALL view). XLSX. |
 | **📅 DOWNLOAD TIMELINE ↓** | The project timeline from Block 1. TXT. |
+| **🔑 REUSED PASSWORDS ↓** | All logins that share a password. One row per secret (password/hash) used in ≥2 places: every `domain\login` that uses it (from LSA+SAM, custom, and all sources) + DPAPI `url;login` with the same password + a reuse count. XLSX. Can be used to find sign-ups on third-party sites that reuse a corporate password. |
 
 > The **ALL CREDS ↓** button moved here from the NXC Collector toolbar. The export itself is unchanged.

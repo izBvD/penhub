@@ -8,8 +8,8 @@ from fastapi import APIRouter
 
 from collector.api import (
     auth, data, dal, data_hosts, data_manage,
-    export, hashkiller, notifications, pages, reports_local_admin, sync, timeline,
-    toolbox, toolbox_exports, workspaces,
+    export, hashkiller, notifications, pages, reports_local_admin, reports_reused,
+    sync, timeline, toolbox, toolbox_exports, workspaces,
 )
 
 api_router = APIRouter()
@@ -28,4 +28,5 @@ api_router.include_router(toolbox.router)
 api_router.include_router(toolbox_exports.router)
 api_router.include_router(timeline.router)
 api_router.include_router(reports_local_admin.router)
+api_router.include_router(reports_reused.router)
 api_router.include_router(pages.router)   # /, /hashkiller, /favicon.ico — last

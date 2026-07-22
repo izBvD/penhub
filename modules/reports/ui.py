@@ -75,6 +75,16 @@ _RP_FRAGMENT = r"""
           &#128197; DOWNLOAD TIMELINE&#8595;</button>
       </div>
 
+      <div class="tb-hint" style="margin-top:16px;margin-bottom:8px">
+        All logins that share the same password/hash &mdash; one row per secret with every
+        <code>domain\login</code> and DPAPI url that uses it, plus a reuse count. XLSX.
+      </div>
+      <div class="actions-row">
+        <button class="btn tb-dl-btn" onclick="RPModule.exportReusedPasswords()"
+                title="Detect and download reused passwords as XLSX">
+          &#128273; REUSED PASSWORDS&#8595;</button>
+      </div>
+
     </div>
 
   </div>

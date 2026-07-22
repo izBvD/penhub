@@ -137,6 +137,9 @@ const RPModule = {
   downloadTimeline() {
     if (this._wsId) window.open(`/api/timeline/download?workspace_id=${this._wsId}`, '_blank');
   },
+  exportReusedPasswords() {
+    if (this._wsId) window.open(`/api/reports/reused-passwords/export?workspace_id=${this._wsId}`, '_blank');
+  },
 
   // ── Modal editor ───────────────────────────────────────────────────────────
   _openModal(o) {
